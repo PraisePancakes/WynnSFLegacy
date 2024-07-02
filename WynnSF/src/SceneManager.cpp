@@ -75,9 +75,8 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 					{
 						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->left;
 						SetScene(scene);
-						auto entrances = this->sceneTable[(int)currentSceneToProcess]->GetEntranceVector();
 
-						for (auto e : entrances) {
+						for (auto e : entranceV) {
 							if (e.side == Side::SIDE_RIGHT) {
 								player->SetPos(e.pos.x - 200, e.pos.y);
 							}
@@ -91,9 +90,8 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->right;
 						SetScene(scene);
 
-						auto entrances = this->sceneTable[(int)currentSceneToProcess]->GetEntranceVector();
 
-						for (auto e : entrances) {
+						for (auto e : entranceV) {
 							if (e.side == Side::SIDE_LEFT) {
 								player->SetPos(e.pos.x + 200, e.pos.y);
 							}
@@ -106,9 +104,9 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 					{
 						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->top;
 						SetScene(scene);
-						auto entrances = this->sceneTable[(int)currentSceneToProcess]->GetEntranceVector();
+					
 
-						for (auto e : entrances) {
+						for (auto e : entranceV) {
 							if (e.side == Side::SIDE_BOTTOM) {
 								player->SetPos(e.pos.x, e.pos.y - 200);
 							}
@@ -120,9 +118,8 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 					{
 						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->bottom;
 						SetScene(scene);
-						auto entrances = this->sceneTable[(int)currentSceneToProcess]->GetEntranceVector();
-
-						for (auto e : entrances) {
+						
+						for (auto e : entranceV) {
 							if (e.side == Side::SIDE_TOP) {
 								player->SetPos(e.pos.x, e.pos.y + 200);
 							}
@@ -238,6 +235,8 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	void SceneManager::updateIntroductionPos() {
 		sf::View view = ctx->getView();
 		sf::Vector2f pos(view.getCenter().x, view.getCenter().y - 200);
+		std::string str = currentIntroText->text.getString();
+		std::cout << str << std::endl;
 		this->currentIntroText->text.setPosition(pos.x, pos.y);
 		
 	}

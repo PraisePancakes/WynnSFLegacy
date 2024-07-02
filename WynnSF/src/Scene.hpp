@@ -452,16 +452,13 @@ public:
 		initExternals();
 		parseSceneData();
 		
-		for (size_t i = 0; i < entrances.size(); i++) {
-			std::cout << (int)entrances[i].side << std::endl;
-		}
-		
 		loadScene();
 
 		
 		
 	};
 
+	
 	
 	std::vector<Entrance> GetEntranceVector() const {
 		return entrances;
