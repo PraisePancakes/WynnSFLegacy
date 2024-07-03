@@ -69,22 +69,57 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			if (plPos.x >= entranceV[i].pos.x && plPos.x <= entranceV[i].pos.x + entranceV[i].size.x) {
 				if (plPos.y >= entranceV[i].pos.y && plPos.y <= entranceV[i].pos.y + entranceV[i].size.y) {
 					Scenes targetScene = currentSceneToProcess;
+					std::vector<Entrance> targetEntrance = {};
 					switch (entranceV[i].side) {
 					case Side::SIDE_LEFT:
+					{
 						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->left;
-						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						for (auto& e : targetEntrance) {
+							if (e.side == Side::SIDE_RIGHT) {
+								player->SetPos(e.pos.x - 256, e.pos.y);
+							}
+						}
+
+					}
+						
+						
 						break;
 					case Side::SIDE_RIGHT:
+					{
 						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->right;
-						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						for (auto& e : targetEntrance) {
+							if (e.side == Side::SIDE_LEFT) {
+								player->SetPos(e.pos.x + 256, e.pos.y);
+							}
+						}
+					}
+					
 						break;
 					case Side::SIDE_TOP:
+					{
 						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->top;
-						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						for (auto& e : targetEntrance) {
+							if (e.side == Side::SIDE_BOTTOM) {
+								player->SetPos(e.pos.x, e.pos.y - 256);
+							}
+						}
+					}
+									
 						break;
 					case Side::SIDE_BOTTOM:
+					{
 						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->bottom;
-						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						for (auto& e : targetEntrance) {
+							if (e.side == Side::SIDE_TOP) {
+								player->SetPos(e.pos.x, e.pos.y + 256);
+							}
+						}
+					}
+									
 						break;
 					default:
 						break;
@@ -115,7 +150,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			sf::Color color = transititionOverlay->getFillColor();
 			static bool flag = false;
 			static int __iter_count = 0;
-			const int animation_step = 10;
+			const int animation_step = 1;
 			
 			if (!flag) {
 				
