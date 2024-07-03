@@ -38,6 +38,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	void SceneManager::initTable() {
 		for (Scenes scene = (Scenes)0; scene < Scenes::SCENE_QUIT; scene = static_cast<Scenes>((size_t)scene + 1)) {
 			std::shared_ptr<Scene> s = std::make_shared<Scene>(scene, getSceneFilePath(scene));
+
 			sceneTable.push_back(s);
 		}
 	};
@@ -61,81 +62,39 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 
 
 	void SceneManager::updateTransitioningPlayer() {
-
 		std::vector<Entrance> entranceV = this->sceneTable[(int)currentSceneToProcess]->GetEntranceVector();
 		Core::Physics::Vec2D plPos = player->GetPos();
 
 		for (size_t i = 0; i < entranceV.size(); i++) {
-
 			if (plPos.x >= entranceV[i].pos.x && plPos.x <= entranceV[i].pos.x + entranceV[i].size.x) {
 				if (plPos.y >= entranceV[i].pos.y && plPos.y <= entranceV[i].pos.y + entranceV[i].size.y) {
+					Scenes targetScene = currentSceneToProcess;
 					switch (entranceV[i].side) {
-
 					case Side::SIDE_LEFT:
-					{
-						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->left;
-						SetScene(scene);
-
-						for (auto e : entranceV) {
-							if (e.side == Side::SIDE_RIGHT) {
-								player->SetPos(e.pos.x - 200, e.pos.y);
-							}
-						}
-
-					}
-
-					break;
+						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->left;
+						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						break;
 					case Side::SIDE_RIGHT:
-					{
-						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->right;
-						SetScene(scene);
-
-
-						for (auto e : entranceV) {
-							if (e.side == Side::SIDE_LEFT) {
-								player->SetPos(e.pos.x + 200, e.pos.y);
-							}
-						}
-
-					}
-
-					break;
+						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->right;
+						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						break;
 					case Side::SIDE_TOP:
-					{
-						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->top;
-						SetScene(scene);
-					
-
-						for (auto e : entranceV) {
-							if (e.side == Side::SIDE_BOTTOM) {
-								player->SetPos(e.pos.x, e.pos.y - 200);
-							}
-						}
-					}
-
-					break;
+						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->top;
+						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						break;
 					case Side::SIDE_BOTTOM:
-					{
-						auto scene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->bottom;
-						SetScene(scene);
-						
-						for (auto e : entranceV) {
-							if (e.side == Side::SIDE_TOP) {
-								player->SetPos(e.pos.x, e.pos.y + 200);
-							}
-						}
-					}
-
-					break;
+						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->bottom;
+						player->SetPos(this->sceneTable[(int)targetScene]->GetSize().x - this->ctx->getSize().x, this->sceneTable[(int)targetScene]->GetSize().y - this->ctx->getSize().y);
+						break;
 					default:
 						break;
 					}
-
+					SetScene(targetScene);
+					break;
 				}
 			}
 		}
-	
-	};
+	}
 
 	void SceneManager::initTransition() {
 		sf::View v = ctx->getView();
@@ -156,19 +115,20 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			sf::Color color = transititionOverlay->getFillColor();
 			static bool flag = false;
 			static int __iter_count = 0;
+			const int animation_step = 10;
 			
 			if (!flag) {
 				
-				color.a++;
-				__iter_count++;
+				color.a += animation_step;
+				__iter_count += animation_step;
 				transititionOverlay->setFillColor(color);
 				if (__iter_count >= 255) {
 					flag = true;
 				}
 			}
 			else if (flag) {
-				color.a--;
-				__iter_count--;
+				color.a -= animation_step;
+				__iter_count -= animation_step;
 				transititionOverlay->setFillColor(color);
 				if (__iter_count <= 0) {
 					isTransitioning = false;
@@ -185,12 +145,13 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			player->Disable();
 			updateTransitioningAnimation();
 			updateTransitioningPos();
-			
+
 		}
 		else {
+			updateTransitioningPlayer();
 			player->Enable();
 		}
-		updateTransitioningPlayer();
+		
 	}
 
 	void SceneManager::Update() {
@@ -198,8 +159,6 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			return;
 		}
 		updateTransitioning();
-		
-		
 		updateIntroduction();
 	}
 
@@ -236,7 +195,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 		sf::View view = ctx->getView();
 		sf::Vector2f pos(view.getCenter().x, view.getCenter().y - 200);
 		std::string str = currentIntroText->text.getString();
-		std::cout << str << std::endl;
+		
 		this->currentIntroText->text.setPosition(pos.x, pos.y);
 		
 	}
@@ -292,7 +251,9 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	};
 
 	void SceneManager::SetScene(Scenes scene) {
+
 		this->currentSceneToProcess = scene;
+
 		isTransitioning = true;
 		initIntroduction();
 		initTransition();

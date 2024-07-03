@@ -255,18 +255,22 @@ class Scene {
 					
 					if (r == 0) {
 						entrances.push_back({ Side::SIDE_TOP, pos, size });
+						continue;
 					}
 					else if (r == scenetl.size() - 1) {
 						entrances.push_back({ Side::SIDE_BOTTOM, pos, size });
+						continue;
 					}
 					else if (c == 0) {
 						
 						entrances.push_back({ Side::SIDE_LEFT, pos, size });
+						continue;
 
 					}
 					else if (c == scenetl[r].size() - 1) {
 						
 						entrances.push_back({ Side::SIDE_RIGHT, pos, size });
+						continue;
 					}
 
 				
@@ -451,14 +455,11 @@ public:
 		
 		initExternals();
 		parseSceneData();
-		
 		loadScene();
-
 		
 		
 	};
 
-	
 	
 	std::vector<Entrance> GetEntranceVector() const {
 		return entrances;
@@ -487,6 +488,10 @@ public:
 	
 	std::shared_ptr<ExternalScenes> GetExternals() const {
 		return this->externalScenes;
+	}
+
+	sf::Vector2f GetSize() const {
+		return { (float)this->scenetl[0].size() * 128, (float)this->scenetl.size() * 128 };
 	}
 
 	Scenes GetID() const {
