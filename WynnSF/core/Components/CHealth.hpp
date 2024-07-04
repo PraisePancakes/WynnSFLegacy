@@ -13,7 +13,5 @@ public:
 		CurrHp = maxHp;
 	};
 
-
-
 	~CHealth() {};
 };

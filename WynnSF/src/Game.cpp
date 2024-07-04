@@ -160,7 +160,7 @@ void Game::sCollider() {
 
 //TEST
 
-
+//move this to scenemanager
 void Game::spawnPlayer() {
 	
 	float spawnX = WINDOW_W / 2 + 50;

@@ -166,6 +166,8 @@
     <ClInclude Include="core\Manager\EntityManager.hpp" />
     <ClInclude Include="core\Physics\Vec2D.hpp" />
     <ClInclude Include="core\Utils\Utils.hpp" />
+    <ClInclude Include="src\Enemy.hpp" />
+    <ClInclude Include="src\EnemyManager.hpp" />
     <ClInclude Include="src\GlobalChatManager.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GUIManager.hpp" />

@@ -243,6 +243,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 		menu = std::make_unique<Menu>(ctx);
 		initTable();
 		
+		
 	};
 
 	void SceneManager::handleKitSelectionEvent() {
@@ -252,7 +253,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 		case 0:
 
 			player->SetKit(KitTypes::KIT_ARCHER);
-			SetScene(Scenes::SCENE_PIGMANS);
+			SetScene(Scenes::SCENE_RAGNI);
 			break;
 		case 1:
 			player->SetKit(KitTypes::KIT_ASSASSIN);
@@ -270,6 +271,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 
 			break;
 		}
+		
 	}
 
 
