@@ -313,6 +313,111 @@
     <Image Include="src\Assets\UI\UI_QuestPage.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Attack1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Attack2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Death.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Fall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Hit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Idle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Jump.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Wizard\Sprites\Character\Run.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Attack1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Attack2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Attack3.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Death.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Fall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Idle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Jump.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Run.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Warrior\Sprites\Character\Take hit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Attack1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Attack2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Death.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Fall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\GetHit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Idle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Jump.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Assassin\Sprites\Character\Run.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Arrow\Move.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Arrow\Static.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\Attack.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\Death.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\Fall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\GetHit.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\Idle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\Jump.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Player\Archer\Sprites\Character\Run.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="src\Assets\Sprites\Enemy\Minotaur.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="src\Assets\Fonts\PixelFont.ttf" />

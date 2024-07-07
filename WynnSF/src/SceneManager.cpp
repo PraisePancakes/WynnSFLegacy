@@ -204,9 +204,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	}
 
 	void SceneManager::initIntroduction() {
-		if (currentSceneToProcess == Scenes::SCENE_MENU || currentSceneToProcess == Scenes::SCENE_KIT_SELECTION || currentSceneToProcess == Scenes::SCENE_QUIT) {
-			return;
-		}
+		
 
 		currentIntroText = nullptr;
 		sf::View view = ctx->getView();
@@ -236,11 +234,12 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	}
 	
 
-	SceneManager::SceneManager(sf::RenderWindow* ctx, Player* player) {
+	SceneManager::SceneManager(EnemyManager* em, sf::RenderWindow* ctx, Player* player) {
 		this->ctx = ctx;
 		this->player = player;
 		this->m_KitSelection = std::make_unique<KitSelection>(ctx);
 		menu = std::make_unique<Menu>(ctx);
+		this->em = em;
 		initTable();
 		
 		
@@ -291,6 +290,10 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 
 		this->currentSceneToProcess = scene;
 
+		if (currentSceneToProcess == Scenes::SCENE_MENU || currentSceneToProcess == Scenes::SCENE_KIT_SELECTION || currentSceneToProcess == Scenes::SCENE_QUIT) {
+			return;
+		}
+		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 100, 100, Core::Physics::Vec2D(300, 300));
 		isTransitioning = true;
 		initIntroduction();
 		initTransition();

@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "KitSelection.hpp"
 #include "Player.hpp"
+#include "EnemyManager.hpp"
 
 class KitSelection;
 class SceneManager {
@@ -18,6 +19,7 @@ class SceneManager {
 	std::string getSceneFilePath(Scenes id);
 	std::shared_ptr<CText> currentIntroText;
 	std::shared_ptr<sf::RectangleShape> transititionOverlay;
+	EnemyManager* em;
 	bool isTransitioning; 
 
 	void initTable();
@@ -36,7 +38,7 @@ class SceneManager {
 	void renderIntroduction();
 
 public:
-	SceneManager(sf::RenderWindow* ctx, Player* player);
+	SceneManager(EnemyManager* em, sf::RenderWindow* ctx, Player* player);
 
 	void Update();
 	void HandleEvents(sf::Event* e);

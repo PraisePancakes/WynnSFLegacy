@@ -51,6 +51,10 @@ namespace Core {
 				this->y *= rhs.y;
 			}
 
+			Vec2D operator*(float rhs) {
+				return Vec2D(this->x * rhs, this->y * rhs);
+			}
+
 			bool operator==(Vec2D rhs) {
 				return (this->x == rhs.x && this->y == rhs.y);
 			}

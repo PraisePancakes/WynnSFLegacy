@@ -17,24 +17,27 @@ public:
 		this->ctx = ctx;
 		
 	};
-	void AddEnemy(const std::string& name, float agroR, int maxHP) {
-		std::shared_ptr<Enemy> e = std::make_shared<Enemy>(name, agroR, maxHP);
+	void AddEnemy(const std::string& spritePath, sf::IntRect srcRect, const std::string& name, float agroR, int maxHP, Core::Physics::Vec2D pos) {
+		std::shared_ptr<Enemy> e = std::make_shared<Enemy>(spritePath, srcRect, name, agroR, maxHP, pos);
 		enemies.push_back(e);
 	};
 
-	
 
 	void Update() {
 		if (enemies.size() > 0) {
 			for (auto& e : enemies) {
+
 				e->Update();
 			}
 		}
 	};
 	void Render() {
+		
 		if (enemies.size() > 0) {
+			
 			for (auto& e : enemies) {
-				e->Render();
+				
+				ctx->draw(e->entity->GetComponent<CSprite>()->sprite);
 			}
 		}
 	};

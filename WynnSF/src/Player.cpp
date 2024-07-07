@@ -144,8 +144,7 @@ void Player::Render(sf::RenderWindow& ctx) {
 void Player::_setPosRelativeToTransform() {
 	
 	auto tc = this->entity->GetComponent<CTransform>();
-	tc->Position.x;
-	tc->Position.y;
+	
 
 	std::shared_ptr<Kit> kitPtr = this->kits[(int)currentKitType];
 	if (kitPtr) {
