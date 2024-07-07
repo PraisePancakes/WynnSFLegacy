@@ -101,7 +101,11 @@ void Game::sUpdate() {
 		}	
 		m_QuestData->Update();
 		m_QuestBook->Update();
-		m_EnemyManager->Update();
+
+		if (!m_SceneManager->IsTransitioning()) {
+			m_EnemyManager->Update();
+		}
+		
 	
 	}
 	m_SceneManager->Update();
@@ -179,8 +183,11 @@ void Game::sRenderer() {
 		if (!m_SceneManager->IsTransitioning()) {
 			m_Gui->Render();
 		}
-		m_Player->Render(this->m_Window);
-		m_EnemyManager->Render();
+		if (!m_SceneManager->IsTransitioning()) {
+			m_Player->Render(this->m_Window);
+			m_EnemyManager->Render();
+		}
+		
 
 	}
 

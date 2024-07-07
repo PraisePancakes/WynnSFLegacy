@@ -293,7 +293,36 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 		if (currentSceneToProcess == Scenes::SCENE_MENU || currentSceneToProcess == Scenes::SCENE_KIT_SELECTION || currentSceneToProcess == Scenes::SCENE_QUIT) {
 			return;
 		}
-		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 100, 100, Core::Physics::Vec2D(300, 300));
+		/*
+			@TEST
+			multiple enemy spawns with 150 radius and 100 hp.
+			convert all similar traits to derive from a enemy type enum :
+			e.g..
+
+			type {
+				ENEMY_MINOTAUR,
+				ENEMY_WITCH,
+				etc..
+			}
+
+			from that enum type we can plug it into AddEnemy().
+
+			instead of passing all these arguments we can create a data set of these arguments for specified enemy type
+
+			ENEMY_MINOTAUR data set => 
+			animator path : "src/Assets/Sprites/Enemy/Minotaur.png", 
+			animator src rect : sf::IntRect(0, 0, 100, 100), 
+			enemy name : "Minotaur", 
+			agro radius : 150, 
+			hp : 100, 
+			pos : Core::Physics::Vec2D(300, 300)
+
+			convert sprite to animator and implement animation states refer to kit module for better understanding
+		
+		*/
+		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 150, 100, Core::Physics::Vec2D(300, 300));
+		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 150, 100, Core::Physics::Vec2D(600, 300));
+		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 150, 100, Core::Physics::Vec2D(100, 300));
 		isTransitioning = true;
 		initIntroduction();
 		initTransition();
