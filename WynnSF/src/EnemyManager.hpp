@@ -17,8 +17,8 @@ public:
 		this->ctx = ctx;
 		
 	};
-	void AddEnemy(const std::string& spritePath, sf::IntRect srcRect, const std::string& name, float agroR, int maxHP, Core::Physics::Vec2D pos) {
-		std::shared_ptr<Enemy> e = std::make_shared<Enemy>(spritePath, srcRect, name, agroR, maxHP, pos);
+	void AddEnemy(EnemyTypes type, Core::Physics::Vec2D pos) {
+		std::shared_ptr<Enemy> e = std::make_shared<Enemy>(type, pos);
 		enemies.push_back(e);
 	};
 

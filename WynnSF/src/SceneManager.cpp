@@ -318,11 +318,12 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			pos : Core::Physics::Vec2D(300, 300)
 
 			convert sprite to animator and implement animation states refer to kit module for better understanding
+
 		
 		*/
-		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 150, 100, Core::Physics::Vec2D(300, 300));
-		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 150, 100, Core::Physics::Vec2D(600, 300));
-		em->AddEnemy("src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 100, 100), "Minotaur", 150, 100, Core::Physics::Vec2D(100, 300));
+		em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(300, 300));
+		em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(600, 300));
+		em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(100, 300));
 		isTransitioning = true;
 		initIntroduction();
 		initTransition();

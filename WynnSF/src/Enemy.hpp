@@ -26,6 +26,12 @@ constexpr float ENEMY_SPEED = 1;
 
 */
 
+enum class EnemyTypes {
+	ENEMY_MINOTAUR,
+};
+
+;
+
 class Enemy {
 
 private:
@@ -34,19 +40,35 @@ private:
 	bool _agro = false;
 	float _agroRadius = 0;
 	std::string spritePath;
-public:
-	Enemy(const std::string& spritePath, sf::IntRect srcRect, const std::string& name, float agroR, int maxHP, Core::Physics::Vec2D pos) {
-		this->name = name;
-		this->entity = EntityManager::GetInstance()->AddEntity("Enemy"); //this is a table entry for all the enemys of this type
-		this->entity->AddComponent<CHealth>(maxHP); //subtract hp by determining if the enemy is hit, if hit, subtract the weapon's hit damage from the enemy's health
-		this->entity->AddComponent<CTransform>(pos, Core::Physics::Vec2D(0, 0), 0);
-		this->entity->AddComponent<CSprite>(spritePath, srcRect, 64, 64);
+
+
+
+	void construct_enemy_by_type(EnemyTypes type) {
+		this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
+		switch (type)
+		{
+		case EnemyTypes::ENEMY_MINOTAUR:
+			this->name = "Minotaur";
+			this->spritePath = "src/Assets/Sprites/Enemy/Minotaur.png";
+			this->_agroRadius = 100;
+			this->entity->AddComponent<CHealth>(150); //subtract hp by determining if the enemy is hit, if hit, subtract the weapon's hit damage from the enemy's health
+			break;
+		default:
+			break;
+		}
+
+		this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
+		this->entity->AddComponent<CSprite>(spritePath, sf::IntRect(0, 0, 100, 100), 64, 64);
 		_agro = false;
-		this->spritePath = spritePath;
-		_agroRadius = agroR;
+	}
+public:
+	Enemy(EnemyTypes type, Core::Physics::Vec2D pos) {
+		construct_enemy_by_type(type);
+		this->entity->GetComponent<CTransform>()->Position = pos;
 	};
 
 	std::shared_ptr<Entity> entity = nullptr;
+
 
 	void Update() {
 			
