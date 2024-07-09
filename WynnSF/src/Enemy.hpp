@@ -9,129 +9,110 @@
 #include "../core/Components/CSprite.hpp"
 
 constexpr float ENEMY_SPEED = 1;
-/*
-	How will Enemys work?
-	ultimately we want a table of all the enemys that we can loop through and check if they are within the players agro range, if they are then we set agro to true,
-	if agro is true, we can deviate the enemy's position to step closer to the player, if the players collision radius is within the enemys collision radius, the player can attack the enemy
-	and vice versa. 
-	if the enemy is not agro we can give it a default movement path via a vector of weights where each index is a direction of that path.
-	e.g..
-	 l  r  u  d
-	[1, 5, 1, 2]
-	
-	the enemy will move 1 unit to the left, then 5 units to the right, followed by 1 unit up, then finally 2 units down.
-	keep repeating this 
-
-	depending on the scene the enemies will change, therefore we should clear the enemies and initialize them on scene load.
-
-*/
 
 enum class EnemyTypes {
-	ENEMY_MINOTAUR,
+    ENEMY_MINOTAUR,
 };
 
-;
+class BaseEnemyType {
+protected:
+    std::shared_ptr<Entity> entity = nullptr;
+    std::string name;
+    bool _agro = false;
+    float _agroRadius = 100;
+
+public:
+    BaseEnemyType(const std::string& name, const std::string& spritePath, float health, float agroRadius)
+        : name(name), _agroRadius(agroRadius) {
+        this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
+        this->entity->AddComponent<CHealth>(health);
+        this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
+        this->entity->AddComponent<CSprite>(spritePath, sf::IntRect(0, 0, 100, 100), 64, 64);
+    }
+
+    virtual std::shared_ptr<Entity> GetEntityInstance() = 0;
+    virtual void Update() = 0;
+
+    const std::string GetName() const {
+        return this->name;
+    }
+
+    virtual ~BaseEnemyType() {
+        this->entity->DestroyEntity();
+    }
+};
+
+class Minotaur : public BaseEnemyType {
+public:
+    Minotaur() : BaseEnemyType("Minotaur", "src/Assets/Sprites/Enemy/Minotaur.png", 150, 100) {}
+
+    std::shared_ptr<Entity> GetEntityInstance() override {
+        return this->entity;
+    }
+
+    void Update() override {
+        std::shared_ptr<Entity> player = EntityManager::GetInstance()->GetEntities("Player")[0];
+        auto playerPos = player->GetComponent<CTransform>()->Position;
+        auto pR = player->GetComponent<CCollider>()->radius;
+
+        auto etc = this->entity->GetComponent<CTransform>();
+        float eX = etc->Position.x;
+        float eY = etc->Position.y;
+
+        float plX = playerPos.x;
+        float plY = playerPos.y;
+
+        float xDiff = plX - eX;
+        float yDiff = plY - eY;
+
+        float distance = std::sqrt(xDiff * xDiff + yDiff * yDiff);
+
+        if (distance < pR + _agroRadius) {
+            _agro = true;
+        }
+        else {
+            _agro = false;
+        }
+
+        if (_agro) {
+            Core::Physics::Vec2D direction(xDiff, yDiff);
+            direction.Normalize();
+            Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
+            etc->Position.x += velocity.x;
+            etc->Position.y += velocity.y;
+        }
+
+        auto sc = this->entity->GetComponent<CSprite>();
+        sc->sprite.setPosition(etc->Position.x, etc->Position.y);
+    }
+
+    ~Minotaur() override {}
+};
 
 class Enemy {
-
 private:
-	
-	std::string name = "";
-	bool _agro = false;
-	float _agroRadius = 0;
-	std::string spritePath;
+    std::shared_ptr<BaseEnemyType> enemyType;
 
-
-
-	void construct_enemy_by_type(EnemyTypes type) {
-		this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
-		switch (type)
-		{
-		case EnemyTypes::ENEMY_MINOTAUR:
-			this->name = "Minotaur";
-			this->spritePath = "src/Assets/Sprites/Enemy/Minotaur.png";
-			this->_agroRadius = 100;
-			this->entity->AddComponent<CHealth>(150); //subtract hp by determining if the enemy is hit, if hit, subtract the weapon's hit damage from the enemy's health
-			break;
-		default:
-			break;
-		}
-
-		this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
-		this->entity->AddComponent<CSprite>(spritePath, sf::IntRect(0, 0, 100, 100), 64, 64);
-		_agro = false;
-	}
 public:
-	Enemy(EnemyTypes type, Core::Physics::Vec2D pos) {
-		construct_enemy_by_type(type);
-		this->entity->GetComponent<CTransform>()->Position = pos;
-	};
+    Enemy(EnemyTypes type, Core::Physics::Vec2D pos) {
+        switch (type) {
+        case EnemyTypes::ENEMY_MINOTAUR:
+            enemyType = std::make_shared<Minotaur>();
+            break;
+            
+        default:
+            throw std::runtime_error("Unknown enemy type");
+        }
+        enemyType->GetEntityInstance()->GetComponent<CTransform>()->Position = pos;
+    }
 
-	std::shared_ptr<Entity> entity = nullptr;
+    void Update() {
+        enemyType->Update();
+    }
 
+    sf::Sprite& GetSprite() const {
+        return enemyType->GetEntityInstance()->GetComponent<CSprite>()->sprite;
+    }
 
-	void Update() {
-			
-
-			std::shared_ptr<Entity> player = EntityManager::GetInstance()->GetEntities("Player")[0];
-			auto playerPos = player->GetComponent<CTransform>()->Position;
-			auto pR = player->GetComponent<CCollider>()->radius;
-			
-			auto etc = this->entity->GetComponent<CTransform>();
-			
-			
-			
-			float eX = etc->Position.x;
-			float eY = etc->Position.y;
-
-			float plX = playerPos.x;
-			float plY = playerPos.y;
-
-			float xDiff = plX - eX;
-			float yDiff = plY - eY;
-
-
-			float distance = std::sqrt(xDiff * xDiff + yDiff * yDiff);
-
-			if (distance < pR + _agroRadius) {
-				std::cout << "hjere";
-				_agro = true;
-			}
-			else {
-				_agro = false;
-			}
-
-			if (_agro) {
-				Core::Physics::Vec2D direction(xDiff, yDiff);
-				direction.Normalize();
-
-			
-				Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
-
-			
-				etc->Position.x += velocity.x;
-				etc->Position.y += velocity.y;
-
-			}
-
-		
-
-			auto sc = this->entity->GetComponent<CSprite>();
-			sc->sprite.setPosition(etc->Position.x, etc->Position.y);
-
-			
-
-		//check first if player is within the agro radius
-		//if the player is within the radius set agro to true
-		//then update the enemys positioning to move closer to the player
-		//then we check if the players collision is within the enemys collision
-		//if true then player can attack the enemy and vice versa
-		//each enemy should hold an hitpoint and hurtpoints field.
-	};
-
-
-	~Enemy() {
-		this->entity->DestroyEntity();
-	};
-
+    ~Enemy() = default;
 };

@@ -37,7 +37,7 @@ public:
 			
 			for (auto& e : enemies) {
 				
-				ctx->draw(e->entity->GetComponent<CSprite>()->sprite);
+				ctx->draw(e->GetSprite());
 			}
 		}
 	};
