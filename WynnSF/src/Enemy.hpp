@@ -24,6 +24,11 @@ enum class EnemyAnimationType {
 
 };
 
+enum class Direction {
+    LEFT,
+    RIGHT
+};
+
 class BaseEnemyType {
 protected:
     std::shared_ptr<Entity> entity = nullptr;
@@ -66,16 +71,27 @@ public:
 
 struct MinotaurAnimatorData {
     CAnimator idle{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 480, 96, 96), 400, 96 };
-    CAnimator run{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 96, 96), 800, 96 };
+    CAnimator run{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 96, 96, 96), 600, 96 };
 };
 
 class Minotaur : public BaseEnemyType {
 
     MinotaurAnimatorData animatorData;
     CAnimator currentAnimator = animatorData.idle;
+    EnemyAnimationType currentAnimationType = EnemyAnimationType::IDLE;
+    Direction currentDirection = Direction::RIGHT;
 
     void update_animator() {
+
+        EnemyAnimationType newAnimationState = _agro ? EnemyAnimationType::RUN : EnemyAnimationType::IDLE;
+
+        if (newAnimationState != currentAnimationType) {
+            SetCurrentAnimator(newAnimationState);
+            currentAnimationType = newAnimationState;
+
+        }
         PlayCurrentAnimator(.2f);
+      
     };
 
     void update_agro() {
@@ -97,9 +113,11 @@ class Minotaur : public BaseEnemyType {
 
         if (distance < pR + _agroRadius) {
             _agro = true;
+           
         }
         else {
             _agro = false;
+
         }
 
         if (_agro) {
@@ -108,6 +126,15 @@ class Minotaur : public BaseEnemyType {
             Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
             etc->Position.x += velocity.x;
             etc->Position.y += velocity.y;
+
+            if (xDiff < 0) {
+                SetCurrentAnimator(EnemyAnimationType::LOOKING_LEFT);
+                currentDirection = Direction::LEFT;
+            }
+            else if (xDiff > 0) {
+                SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
+                currentDirection = Direction::RIGHT;
+            }
         }
 
         this->currentAnimator.sprite.setPosition(etc->Position.x, etc->Position.y);
@@ -128,6 +155,7 @@ public:
     void Update() override {
         update_animator();
         update_agro();
+       
     }
 
     void SetCurrentAnimator(EnemyAnimationType animatorType) override {
@@ -135,9 +163,11 @@ public:
         {
         case EnemyAnimationType::IDLE:
             this->currentAnimator = animatorData.idle;
+          
             break;
         case EnemyAnimationType::RUN:
             this->currentAnimator = animatorData.run;
+           
             break;
         case EnemyAnimationType::ATTACK:
             break;
@@ -184,9 +214,6 @@ public:
         enemyType->Update();
     }
 
-    sf::Sprite& GetSprite() const {
-        return enemyType->GetEntityInstance()->GetComponent<CSprite>()->sprite;
-    }
 
     CAnimator& GetCurrentAnimator() const {
         return this->enemyType->GetCurrentAnimator();
