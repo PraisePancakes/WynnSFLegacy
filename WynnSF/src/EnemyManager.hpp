@@ -36,8 +36,7 @@ public:
 		if (enemies.size() > 0) {
 			
 			for (auto& e : enemies) {
-				
-				ctx->draw(e->GetSprite());
+				ctx->draw(e->GetCurrentAnimator().sprite);
 			}
 		}
 	};

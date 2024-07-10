@@ -14,43 +14,71 @@ enum class EnemyTypes {
     ENEMY_MINOTAUR,
 };
 
+
+enum class EnemyAnimationType {
+    IDLE,
+    RUN,
+    ATTACK,
+    LOOKING_LEFT,
+    LOOKING_RIGHT,
+
+};
+
 class BaseEnemyType {
 protected:
     std::shared_ptr<Entity> entity = nullptr;
     std::string name;
     bool _agro = false;
     float _agroRadius = 100;
-
+    
 public:
-    BaseEnemyType(const std::string& name, const std::string& spritePath, float health, float agroRadius)
+    BaseEnemyType(const std::string& name, float health, float agroRadius)
         : name(name), _agroRadius(agroRadius) {
         this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
         this->entity->AddComponent<CHealth>(health);
         this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
-        this->entity->AddComponent<CSprite>(spritePath, sf::IntRect(0, 0, 100, 100), 64, 64);
+      
     }
 
+    virtual void SetCurrentAnimator(EnemyAnimationType animatorType) = 0;
     virtual std::shared_ptr<Entity> GetEntityInstance() = 0;
     virtual void Update() = 0;
+    virtual CAnimator& GetCurrentAnimator() = 0;
+    virtual void PlayCurrentAnimator(float dt) = 0;
+
+
+    void DestroyEnemy() {
+        this->entity->DestroyEntity();
+    }
 
     const std::string GetName() const {
         return this->name;
     }
 
     virtual ~BaseEnemyType() {
-        this->entity->DestroyEntity();
+        DestroyEnemy();
     }
 };
 
+//We create any enemy we want via deriving from BaseEnemyType
+//each enemy has a different Update because each enemy will have a different dataset to update on.
+
+
+struct MinotaurAnimatorData {
+    CAnimator idle{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 480, 96, 96), 400, 96 };
+    CAnimator run{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 0, 96, 96), 800, 96 };
+};
+
 class Minotaur : public BaseEnemyType {
-public:
-    Minotaur() : BaseEnemyType("Minotaur", "src/Assets/Sprites/Enemy/Minotaur.png", 150, 100) {}
 
-    std::shared_ptr<Entity> GetEntityInstance() override {
-        return this->entity;
-    }
+    MinotaurAnimatorData animatorData;
+    CAnimator currentAnimator = animatorData.idle;
 
-    void Update() override {
+    void update_animator() {
+        PlayCurrentAnimator(.2f);
+    };
+
+    void update_agro() {
         std::shared_ptr<Entity> player = EntityManager::GetInstance()->GetEntities("Player")[0];
         auto playerPos = player->GetComponent<CTransform>()->Position;
         auto pR = player->GetComponent<CCollider>()->radius;
@@ -82,11 +110,57 @@ public:
             etc->Position.y += velocity.y;
         }
 
-        auto sc = this->entity->GetComponent<CSprite>();
-        sc->sprite.setPosition(etc->Position.x, etc->Position.y);
+        this->currentAnimator.sprite.setPosition(etc->Position.x, etc->Position.y);
+        
+    };
+
+public:
+    Minotaur() : BaseEnemyType("Minotaur", 150, 100) { 
+        this->currentAnimator.ScaleToNxN(128, 128);
     }
 
-    ~Minotaur() override {}
+    std::shared_ptr<Entity> GetEntityInstance() override {
+        return this->entity;
+    }
+
+   
+
+    void Update() override {
+        update_animator();
+        update_agro();
+    }
+
+    void SetCurrentAnimator(EnemyAnimationType animatorType) override {
+        switch (animatorType)
+        {
+        case EnemyAnimationType::IDLE:
+            this->currentAnimator = animatorData.idle;
+            break;
+        case EnemyAnimationType::RUN:
+            this->currentAnimator = animatorData.run;
+            break;
+        case EnemyAnimationType::ATTACK:
+            break;
+        case EnemyAnimationType::LOOKING_LEFT:
+            currentAnimator.ScaleToNxN(-128, 128);
+            break;
+        case EnemyAnimationType::LOOKING_RIGHT:
+            currentAnimator.ScaleToNxN(128, 128);
+            break;
+        default:
+            break;
+        }
+    };
+
+    CAnimator& GetCurrentAnimator() override {
+        return this->currentAnimator;
+    };
+
+    void PlayCurrentAnimator(float dt) override {
+        currentAnimator.Play(dt);
+    };
+
+    ~Minotaur() override {};
 };
 
 class Enemy {
@@ -113,6 +187,10 @@ public:
     sf::Sprite& GetSprite() const {
         return enemyType->GetEntityInstance()->GetComponent<CSprite>()->sprite;
     }
+
+    CAnimator& GetCurrentAnimator() const {
+        return this->enemyType->GetCurrentAnimator();
+    };
 
     ~Enemy() = default;
 };

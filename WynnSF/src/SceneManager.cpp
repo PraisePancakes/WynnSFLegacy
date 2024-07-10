@@ -150,7 +150,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			sf::Color color = transititionOverlay->getFillColor();
 			static bool flag = false;
 			static int __iter_count = 0;
-			const int animation_step = 1;
+			const int animation_step = 10;
 			
 			if (!flag) {
 				
