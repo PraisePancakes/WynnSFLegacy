@@ -118,6 +118,55 @@ void Game::sUpdate() {
 
 */
 
+void Game::checkCollision(Entity& e, EntityVec& ev) {
+	float ex = e.GetComponent<CTransform>()->Position.x;
+	float ey = e.GetComponent<CTransform>()->Position.y;
+
+	for (auto& entity : ev) {
+		if (*entity == e) {
+			continue;
+		}
+
+		if (entity->HasComponent<CCollider>()) {
+			float entityX = 0.f;
+			float entityY = 0.f;
+
+			if (entity->HasComponent<CSprite>()) {
+				entityX = entity->GetComponent<CSprite>()->sprite.getPosition().x;
+				entityY = entity->GetComponent<CSprite>()->sprite.getPosition().y;
+			}
+			else if (entity->HasComponent<CTransform>()) {
+				entityX = entity->GetComponent<CTransform>()->Position.x;
+				entityY = entity->GetComponent<CTransform>()->Position.y;
+			}
+
+			float xDiff = ex - entityX;
+			float yDiff = ey - entityY;
+
+			float distance = std::sqrt(xDiff * xDiff + yDiff * yDiff);
+			float er = e.GetComponent<CCollider>()->radius;
+			float entityR = entity->GetComponent<CCollider>()->radius;
+
+			if (distance < er + entityR) {
+				auto tc = e.GetComponent<CTransform>();
+
+				if (xDiff < 0 && std::abs(xDiff) > std::abs(yDiff)) {
+					tc->Position.x -= std::abs(e.GetComponent<CTransform>()->Velocity.x);
+				}
+				else if (xDiff > 0 && std::abs(xDiff) > std::abs(yDiff)) {
+					tc->Position.x += std::abs(e.GetComponent<CTransform>()->Velocity.x);
+				}
+				else if (yDiff < 0 && std::abs(yDiff) > std::abs(xDiff)) {
+					tc->Position.y -= std::abs(e.GetComponent<CTransform>()->Velocity.y);
+				}
+				else if (yDiff > 0 && std::abs(yDiff) > std::abs(xDiff)) {
+					tc->Position.y += std::abs(e.GetComponent<CTransform>()->Velocity.y);
+				}
+			}
+		}
+	}
+}
+
 void Game::checkCollision(EntityVec& ev) {
 
 	float plx = m_Player->GetPos().x;
@@ -126,8 +175,20 @@ void Game::checkCollision(EntityVec& ev) {
 
 	for (auto& e : ev) {
 		if (e->HasComponent<CCollider>()) {
-			float ex = e->GetComponent<CSprite>()->sprite.getPosition().x;
-			float ey = e->GetComponent<CSprite>()->sprite.getPosition().y;
+
+			float ex = 0.f;
+			float ey = 0.f;
+
+			if (e->HasComponent<CSprite>()) {
+				ex = e->GetComponent<CSprite>()->sprite.getPosition().x;
+				ey = e->GetComponent<CSprite>()->sprite.getPosition().y;
+			}
+			if (e->HasComponent<CTransform>()) {
+				ex = e->GetComponent<CTransform>()->Position.x;
+				ey = e->GetComponent<CTransform>()->Position.y;
+			}
+		
+
 			float xDiff = plx - ex;
 			float yDiff = ply - ey;
 
@@ -137,7 +198,7 @@ void Game::checkCollision(EntityVec& ev) {
 
 			if (distance < pr + er) {
 				auto tc = m_Player->GetEntityInstance()->GetComponent<CTransform>();
-
+				
 				if (xDiff < 0 && std::abs(xDiff) > std::abs(yDiff)) {
 					tc->Position.x -= std::abs(m_Player->GetEntityInstance()->GetComponent<CTransform>()->Velocity.x);
 				}
@@ -146,6 +207,7 @@ void Game::checkCollision(EntityVec& ev) {
 				}
 				else if (yDiff < 0 && std::abs(yDiff) > std::abs(xDiff)) {
 					tc->Position.y -= std::abs(m_Player->GetEntityInstance()->GetComponent<CTransform>()->Velocity.y);
+					
 				}
 				else if (yDiff > 0 && std::abs(yDiff) > std::abs(xDiff)) {
 					tc->Position.y += std::abs(m_Player->GetEntityInstance()->GetComponent<CTransform>()->Velocity.y);
@@ -159,8 +221,17 @@ void Game::checkCollision(EntityVec& ev) {
 
 void Game::sCollider() {
 	EntityVec tlTiles = m_SceneManager->GetCurrentScene()->GetTopLayer();
+	EntityVec enemies = EntityManager::GetInstance()->GetEntities("Enemy");
+	if (enemies.size() > 0) {
 
-	checkCollision(tlTiles);
+		for (auto& enemy : enemies) {
+			checkCollision(*enemy, enemies);
+			
+		}
+		
+	}
+	checkCollision(*m_Player->GetEntityInstance(), enemies);
+	checkCollision(*m_Player->GetEntityInstance(), tlTiles);
 };
 
 

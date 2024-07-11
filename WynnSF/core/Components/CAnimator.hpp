@@ -20,7 +20,20 @@ public:
 	
 
 
-	CAnimator(CAnimator& other) = default;
+	CAnimator(const CAnimator& other) {
+		this->maxFrame = other.maxFrame;
+		this->frameWidth = other.frameWidth;
+		this->srcRect = other.srcRect;
+		this->path = other.path;
+		this->m_Clock = other.m_Clock;
+		if (!this->texture.loadFromFile(this->path)) {
+			std::cerr << "Error opening file at path : " << this->path << std::endl;
+		};
+		this->sprite.setTexture(this->texture);
+		this->sprite.setTextureRect(other.srcRect);
+		this->sprite.setOrigin(other.sprite.getOrigin());
+		this->sprite.setScale(other.sprite.getScale());
+	};
 	CAnimator() {};
 	CAnimator(const std::string& texturePath, sf::IntRect srcRect,  int maxFrame, int frameWidth)  {
 		this->maxFrame = maxFrame;
@@ -88,6 +101,18 @@ public:
 		sprite.setTexture(this->texture);
 		sprite.setTextureRect(srcRect);
 	};
+
+	void Reset(CAnimator& other) {
+		this->sprite = other.sprite;
+		this->frameWidth = other.frameWidth;
+		this->path = other.path;
+		if (!this->texture.loadFromFile(this->path)) {
+			std::cerr << "Error opening file at path : " << this->path << std::endl;
+		};
+
+		sprite.setTexture(other.texture);
+		sprite.setTextureRect(other.srcRect);
+	}
 
 	
 

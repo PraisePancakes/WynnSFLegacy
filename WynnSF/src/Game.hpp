@@ -45,6 +45,7 @@ class Game {
 		 
 	*/
 
+	void checkCollision(Entity& e, EntityVec& ev);
 	void checkCollision(EntityVec& ev);
 	void sCollider();
 	void updateCam();

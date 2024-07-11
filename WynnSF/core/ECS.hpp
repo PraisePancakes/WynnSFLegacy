@@ -97,6 +97,10 @@ public:
 
 	}
 
+	bool operator==(const Entity& other) const {
+		return (this->GetID() == other.GetID() && this->GetTag() == other.GetTag());
+	}
+
 	inline void DestroyEntity() {
 		
 		

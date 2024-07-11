@@ -42,6 +42,7 @@ public:
         this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
         this->entity->AddComponent<CHealth>(health);
         this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
+        
       
     }
 
@@ -88,6 +89,7 @@ class Minotaur : public BaseEnemyType {
         if (newAnimationState != currentAnimationType) {
             SetCurrentAnimator(newAnimationState);
             currentAnimationType = newAnimationState;
+          
 
         }
         PlayCurrentAnimator(.2f);
@@ -121,19 +123,29 @@ class Minotaur : public BaseEnemyType {
         }
 
         if (_agro) {
-            Core::Physics::Vec2D direction(xDiff, yDiff);
-            direction.Normalize();
-            Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
-            etc->Position.x += velocity.x;
-            etc->Position.y += velocity.y;
-
-            if (xDiff < 0) {
-                SetCurrentAnimator(EnemyAnimationType::LOOKING_LEFT);
-                currentDirection = Direction::LEFT;
+            if (distance < pR) {
+               
+                etc->Velocity.x = 0;
+                etc->Velocity.y = 0;
+                SetCurrentAnimator(EnemyAnimationType::ATTACK);
             }
-            else if (xDiff > 0) {
-                SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
-                currentDirection = Direction::RIGHT;
+            else {
+                
+                Core::Physics::Vec2D direction(xDiff, yDiff);
+                direction.Normalize();
+                Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
+                etc->Position.x += velocity.x;
+                etc->Position.y += velocity.y;
+                etc->Velocity = velocity;
+
+                if (xDiff < 0) {
+                    SetCurrentAnimator(EnemyAnimationType::LOOKING_LEFT);
+                    currentDirection = Direction::LEFT;
+                }
+                else if (xDiff > 0) {
+                    SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
+                    currentDirection = Direction::RIGHT;
+                }
             }
         }
 
@@ -144,6 +156,8 @@ class Minotaur : public BaseEnemyType {
 public:
     Minotaur() : BaseEnemyType("Minotaur", 150, 100) { 
         this->currentAnimator.ScaleToNxN(128, 128);
+        this->entity->AddComponent<CCollider>(currentAnimator.frameWidth / 2);
+       
     }
 
     std::shared_ptr<Entity> GetEntityInstance() override {

@@ -22,6 +22,9 @@ public:
 		enemies.push_back(e);
 	};
 
+	EnemyVec& GetEnemyVec() {
+		return enemies;
+	};
 
 	void Update() {
 		if (enemies.size() > 0) {
