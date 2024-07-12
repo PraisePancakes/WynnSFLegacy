@@ -157,7 +157,7 @@ class Minotaur : public BaseEnemyType {
 
                 etc->Velocity.x += 0;
                 etc->Velocity.y += 0;
-                state.SetIdle();
+                state.SetIdle(); // state.SetAttack();
             }
             else {
 
@@ -168,16 +168,14 @@ class Minotaur : public BaseEnemyType {
                 etc->Position.y += velocity.y;
                 etc->Velocity = velocity;
 
-                if (xDiff < 0) {
-                    SetCurrentAnimator(EnemyAnimationType::LOOKING_LEFT);
-                    currentDirection = Direction::LEFT;
-                }
-                else if (xDiff > 0) {
-                    SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
-                    currentDirection = Direction::RIGHT;
-                }
-               
             }
+        }
+
+        if (xDiff < 0) {
+            SetCurrentAnimator(EnemyAnimationType::LOOKING_LEFT);
+        }
+        else if (xDiff > 0) {
+           SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
         }
  
         this->currentAnimator.sprite.setPosition(etc->Position.x, etc->Position.y);
