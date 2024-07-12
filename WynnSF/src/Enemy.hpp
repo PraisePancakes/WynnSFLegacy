@@ -29,12 +29,40 @@ enum class Direction {
     RIGHT
 };
 
+struct EnemyState {
+    bool state_agro = false;
+    bool state_idle = false;
+    bool state_attack = false;
+
+    EnemyState() {};
+    void SetAgro() {
+        state_agro = true;
+        state_idle = false;
+        state_attack = false;
+    };
+
+    void SetIdle() {
+        state_agro = false;
+        state_idle = true;
+        state_attack = false;
+    }
+
+    void SetAttack() {
+        state_agro = false;
+        state_idle = false;
+        state_attack = true;
+    }
+
+    ~EnemyState() {};
+};
+
 class BaseEnemyType {
 protected:
     std::shared_ptr<Entity> entity = nullptr;
     std::string name;
     bool _agro = false;
     float _agroRadius = 100;
+
     
 public:
     BaseEnemyType(const std::string& name, float health, float agroRadius)
@@ -81,10 +109,11 @@ class Minotaur : public BaseEnemyType {
     CAnimator currentAnimator = animatorData.idle;
     EnemyAnimationType currentAnimationType = EnemyAnimationType::IDLE;
     Direction currentDirection = Direction::RIGHT;
+    EnemyState state;
 
     void update_animator() {
 
-        EnemyAnimationType newAnimationState = _agro ? EnemyAnimationType::RUN : EnemyAnimationType::IDLE;
+        EnemyAnimationType newAnimationState = state.state_agro ? EnemyAnimationType::RUN : EnemyAnimationType::IDLE;
 
         if (newAnimationState != currentAnimationType) {
             SetCurrentAnimator(newAnimationState);
@@ -114,23 +143,24 @@ class Minotaur : public BaseEnemyType {
         float distance = std::sqrt(xDiff * xDiff + yDiff * yDiff);
 
         if (distance < pR + _agroRadius) {
-            _agro = true;
+            state.SetAgro();
            
         }
         else {
-            _agro = false;
+            state.SetIdle();
 
         }
 
-        if (_agro) {
+        if (state.state_agro) {
+          
             if (distance < pR) {
-               
-                etc->Velocity.x = 0;
-                etc->Velocity.y = 0;
-                SetCurrentAnimator(EnemyAnimationType::ATTACK);
+
+                etc->Velocity.x += 0;
+                etc->Velocity.y += 0;
+                state.SetIdle();
             }
             else {
-                
+
                 Core::Physics::Vec2D direction(xDiff, yDiff);
                 direction.Normalize();
                 Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
@@ -146,9 +176,10 @@ class Minotaur : public BaseEnemyType {
                     SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
                     currentDirection = Direction::RIGHT;
                 }
+               
             }
         }
-
+ 
         this->currentAnimator.sprite.setPosition(etc->Position.x, etc->Position.y);
         
     };
