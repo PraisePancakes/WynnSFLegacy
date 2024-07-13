@@ -24,11 +24,6 @@ enum class EnemyAnimationType {
 
 };
 
-enum class Direction {
-    LEFT,
-    RIGHT
-};
-
 struct EnemyState {
     bool state_agro = false;
     bool state_idle = false;
@@ -108,7 +103,6 @@ class Minotaur : public BaseEnemyType {
     MinotaurAnimatorData animatorData;
     CAnimator currentAnimator = animatorData.idle;
     EnemyAnimationType currentAnimationType = EnemyAnimationType::IDLE;
-    Direction currentDirection = Direction::RIGHT;
     EnemyState state;
 
     void update_animator() {
@@ -141,6 +135,10 @@ class Minotaur : public BaseEnemyType {
         float yDiff = plY - eY;
 
         float distance = std::sqrt(xDiff * xDiff + yDiff * yDiff);
+        float velX = 0;
+        float velY = 0;
+           
+        EnemyAnimationType direction = EnemyAnimationType::LOOKING_LEFT;
 
         if (distance < pR + _agroRadius) {
             state.SetAgro();
@@ -154,30 +152,45 @@ class Minotaur : public BaseEnemyType {
         if (state.state_agro) {
           
             if (distance < pR) {
-
+              
                 etc->Velocity.x += 0;
                 etc->Velocity.y += 0;
                 state.SetIdle(); // state.SetAttack();
             }
             else {
+           
+                if (xDiff >= 0) {
+                    velX += ENEMY_SPEED;
+                    direction = EnemyAnimationType::LOOKING_RIGHT;
+                   
+                }
+                if (xDiff < 0 ) {
+                    velX -= ENEMY_SPEED;
+                    direction = EnemyAnimationType::LOOKING_LEFT;
+                }
 
-                Core::Physics::Vec2D direction(xDiff, yDiff);
-                direction.Normalize();
-                Core::Physics::Vec2D velocity = direction * ENEMY_SPEED;
-                etc->Position.x += velocity.x;
-                etc->Position.y += velocity.y;
-                etc->Velocity = velocity;
+                if (yDiff > 0) {
+                    velY += ENEMY_SPEED;
+                }
+                if (yDiff < 0) {
+                    velY -= ENEMY_SPEED;
+                   
+                }
+
+                etc->Velocity.x = velX;
+                etc->Velocity.y = velY;
+                etc->Velocity.Normalize();
+
+                etc->Velocity.x *= ENEMY_SPEED;
+                etc->Velocity.y *= ENEMY_SPEED;
+
+                etc->Position += etc->Velocity;
 
             }
         }
 
-        if (xDiff < 0) {
-            SetCurrentAnimator(EnemyAnimationType::LOOKING_LEFT);
-        }
-        else if (xDiff > 0) {
-           SetCurrentAnimator(EnemyAnimationType::LOOKING_RIGHT);
-        }
- 
+        SetCurrentAnimator(direction);
+        
         this->currentAnimator.sprite.setPosition(etc->Position.x, etc->Position.y);
         
     };
