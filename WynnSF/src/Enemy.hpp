@@ -43,7 +43,7 @@ struct EnemyState {
     }
 
     void SetAttack() {
-        state_agro = false;
+        state_agro = true;
         state_idle = false;
         state_attack = true;
     }
@@ -96,6 +96,7 @@ public:
 struct MinotaurAnimatorData {
     CAnimator idle{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 480, 96, 96), 400, 96 };
     CAnimator run{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 96, 96, 96), 600, 96 };
+    CAnimator attack{ "src/Assets/Sprites/Enemy/Minotaur.png", sf::IntRect(0, 288, 96, 96), 700, 96 };
 };
 
 class Minotaur : public BaseEnemyType {
@@ -107,7 +108,20 @@ class Minotaur : public BaseEnemyType {
 
     void update_animator() {
 
-        EnemyAnimationType newAnimationState = state.state_agro ? EnemyAnimationType::RUN : EnemyAnimationType::IDLE;
+        EnemyAnimationType newAnimationState;
+
+        if (state.state_agro) {
+            if (state.state_attack) {
+                newAnimationState = EnemyAnimationType::ATTACK;
+            }
+            else {
+                newAnimationState = EnemyAnimationType::RUN;
+
+            }
+        }
+        else {
+            newAnimationState = EnemyAnimationType::IDLE;
+        }
 
         if (newAnimationState != currentAnimationType) {
             SetCurrentAnimator(newAnimationState);
@@ -118,6 +132,7 @@ class Minotaur : public BaseEnemyType {
         PlayCurrentAnimator(.2f);
       
     };
+ 
 
     void update_agro() {
         std::shared_ptr<Entity> player = EntityManager::GetInstance()->GetEntities("Player")[0];
@@ -155,7 +170,15 @@ class Minotaur : public BaseEnemyType {
               
                 etc->Velocity.x += 0;
                 etc->Velocity.y += 0;
-                state.SetIdle(); // state.SetAttack();
+                state.SetAttack();
+
+                if (xDiff >= 0) {
+                    direction = EnemyAnimationType::LOOKING_RIGHT;
+                }
+                else {
+                    direction = EnemyAnimationType::LOOKING_LEFT;
+                }
+             
             }
             else {
            
@@ -188,6 +211,7 @@ class Minotaur : public BaseEnemyType {
 
             }
         }
+
 
         SetCurrentAnimator(direction);
         
@@ -226,6 +250,7 @@ public:
            
             break;
         case EnemyAnimationType::ATTACK:
+            this->currentAnimator = animatorData.attack;
             break;
         case EnemyAnimationType::LOOKING_LEFT:
             currentAnimator.ScaleToNxN(-128, 128);
