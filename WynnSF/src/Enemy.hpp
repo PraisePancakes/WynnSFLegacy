@@ -7,6 +7,7 @@
 #include "../core/Utils/Utils.hpp"
 #include "../core/Components/CCollider.hpp"
 #include "../core/Components/CSprite.hpp"
+#include "../core/Components/CHealth.hpp"
 
 constexpr float ENEMY_SPEED = 1;
 
@@ -28,6 +29,7 @@ struct EnemyState {
     bool state_agro = false;
     bool state_idle = false;
     bool state_attack = false;
+    bool state_attack_finished = false;
 
     EnemyState() {};
     void SetAgro() {
@@ -57,14 +59,16 @@ protected:
     std::string name;
     bool _agro = false;
     float _agroRadius = 100;
+    unsigned short int _damageOutput = 0;
 
     
 public:
-    BaseEnemyType(const std::string& name, float health, float agroRadius)
-        : name(name), _agroRadius(agroRadius) {
+    BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage)
+        : name(name), _agroRadius(agroRadius), _damageOutput(damage) {
         this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
         this->entity->AddComponent<CHealth>(health);
         this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
+       
         
       
     }
@@ -106,6 +110,7 @@ class Minotaur : public BaseEnemyType {
     EnemyAnimationType currentAnimationType = EnemyAnimationType::IDLE;
     EnemyState state;
 
+
     void update_animator() {
 
         EnemyAnimationType newAnimationState;
@@ -123,15 +128,26 @@ class Minotaur : public BaseEnemyType {
             newAnimationState = EnemyAnimationType::IDLE;
         }
 
+
         if (newAnimationState != currentAnimationType) {
             SetCurrentAnimator(newAnimationState);
             currentAnimationType = newAnimationState;
-          
 
         }
         PlayCurrentAnimator(.2f);
       
     };
+
+    void update_damage_output() {
+        std::shared_ptr<Entity> healthE = EntityManager::GetInstance()->GetEntities("Player-Health")[0];
+        auto phealth = healthE->GetComponent<CHealth>();
+
+        unsigned short int damage = this->_damageOutput;
+        if (state.state_attack && currentAnimator.finishedCurrentAnimation) {
+            phealth->CurrHp -= damage;
+            currentAnimator.finishedCurrentAnimation = false;
+        }
+    }
  
 
     void update_agro() {
@@ -178,7 +194,7 @@ class Minotaur : public BaseEnemyType {
                 else {
                     direction = EnemyAnimationType::LOOKING_LEFT;
                 }
-             
+
             }
             else {
            
@@ -220,7 +236,7 @@ class Minotaur : public BaseEnemyType {
     };
 
 public:
-    Minotaur() : BaseEnemyType("Minotaur", 150, 100) { 
+    Minotaur() : BaseEnemyType("Minotaur", 150, 100, 20) { 
         this->currentAnimator.ScaleToNxN(128, 128);
         this->entity->AddComponent<CCollider>(currentAnimator.frameWidth / 2);
        
@@ -235,6 +251,7 @@ public:
     void Update() override {
         update_animator();
         update_agro();
+        update_damage_output();
        
     }
 
@@ -268,7 +285,7 @@ public:
     };
 
     void PlayCurrentAnimator(float dt) override {
-        currentAnimator.Play(dt);
+         currentAnimator.Play(dt);
     };
 
     ~Minotaur() override {};

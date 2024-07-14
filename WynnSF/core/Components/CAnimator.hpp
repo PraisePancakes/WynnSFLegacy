@@ -52,23 +52,25 @@ public:
 	
 		
 	};
+	bool finishedCurrentAnimation = false;
 
 	void Play(float dt) {
 		if (m_Clock.getElapsedTime().asSeconds() > dt) {
 			
 			if (this->srcRect.left >= maxFrame) {
 				this->srcRect.left = 0;
+				finishedCurrentAnimation = true;
 			}
 			else {
 				this->srcRect.left += frameWidth;
-				
+				finishedCurrentAnimation = false;
 			}
 			sprite.setTextureRect(srcRect);
 
 			m_Clock.restart();
 		}
 		sprite.setOrigin((float)srcRect.width / 2, (float)srcRect.height / 2);
-	
+
 	};
 
 	void ScaleToNxN( const int nx, const int ny) {
