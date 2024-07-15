@@ -64,7 +64,8 @@ protected:
     float _agroRadius = 100;
     unsigned short int _damageOutput = 0;
     sf::RectangleShape healthBarContainer;
-    sf::RectangleShape healthBar;
+    sf::RectangleShape healthBarFill;
+    sf::Text nameRenderable;
     
 public:
     BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage)
@@ -80,9 +81,9 @@ public:
        
       
      
-        healthBar.setSize(sf::Vector2f(healthC->MaxHP, 5));
-        healthBar.setFillColor(sf::Color::Green);
-        healthBar.setOrigin(healthBar.getSize().x / 2, healthBar.getSize().y / 2);
+        healthBarFill.setSize(sf::Vector2f(healthC->MaxHP, 5));
+        healthBarFill.setFillColor(sf::Color::Green);
+        healthBarFill.setOrigin(healthBarFill.getSize().x / 2, healthBarFill.getSize().y / 2);
 
         healthBarContainer.setSize(sf::Vector2f(healthC->MaxHP, 5));
         healthBarContainer.setFillColor(sf::Color::Black);
@@ -132,35 +133,60 @@ class Minotaur : public BaseEnemyType {
     EnemyAnimationType currentAnimationType = EnemyAnimationType::IDLE;
     EnemyState state;
 
-    void update_healthbar_ui() {
-        const auto healthTxtC = health_entity->GetComponent<CText>();
+    void update_healthbar_position() {
+     
         const auto healthC = health_entity->GetComponent<CHealth>();
-        
 
         if (healthC->CurrHp <= 0) {
             healthC->CurrHp = 0;
         }
 
-        healthBarContainer.setPosition(this->entity->GetComponent<CTransform>()->Position.x , this->entity->GetComponent<CTransform>()->Position.y - (currentAnimator.sprite.getGlobalBounds().height / 2));
-        healthBar.setPosition(healthBarContainer.getPosition().x, healthBarContainer.getPosition().y);
-        healthBar.setSize(sf::Vector2f(healthC->CurrHp, 5));
-       
+        const float healthBarContainerX = this->entity->GetComponent<CTransform>()->Position.x;
+        const float healthBarContainerY = this->entity->GetComponent<CTransform>()->Position.y - (currentAnimator.sprite.getGlobalBounds().height / 2);
+
+        const sf::Vector2f healthBarContainerPos(healthBarContainerX, healthBarContainerY);
+        healthBarContainer.setPosition(healthBarContainerPos);
+
+        const sf::Vector2f healthBarFillPos(healthBarContainerX, healthBarContainerY);
+        healthBarFill.setPosition(healthBarFillPos);
+
+        healthBarFill.setSize(sf::Vector2f(healthC->CurrHp, 5));
+
+    }
+
+    void update_healthbar_fill() {
+
+        const auto healthC = health_entity->GetComponent<CHealth>();
         const int YELLOW_MIN = (healthC->MaxHP / 3) * 2;
         const int YELLOW_MAX = (healthC->MaxHP / 2);
         const int RED_MAX = YELLOW_MAX;
 
-        
-
         if (healthC->CurrHp <= YELLOW_MIN && healthC->CurrHp > YELLOW_MAX) {
-            healthBar.setFillColor(sf::Color::Yellow);
+            healthBarFill.setFillColor(sf::Color::Yellow);
         }
         else if (healthC->CurrHp <= RED_MAX) {
-            healthBar.setFillColor(sf::Color::Red);
+            healthBarFill.setFillColor(sf::Color::Red);
         }
 
-       
-        healthTxtC->text.setPosition(healthBarContainer.getPosition().x - (healthTxtC->text.getGlobalBounds().width / 2), healthBarContainer.getPosition().y - healthBarContainer.getGlobalBounds().height);
+    }
+
+    void update_healthbar_text() {
+        const auto healthTxtC = health_entity->GetComponent<CText>();
+        const auto healthC = health_entity->GetComponent<CHealth>();
+
+        const float healthTextXpos = healthBarContainer.getPosition().x - (healthTxtC->text.getGlobalBounds().width / 2);
+        const float healthTextYpos = healthBarContainer.getPosition().y - healthBarContainer.getGlobalBounds().height;
+        sf::Vector2f healthTextPos(healthTextXpos, healthTextYpos);
+
+        healthTxtC->text.setPosition(healthTextPos);
         healthTxtC->text.setString(std::to_string(healthC->CurrHp));
+    }
+
+    void update_healthbar_ui() {
+
+        update_healthbar_position();
+        update_healthbar_fill();
+        update_healthbar_text();
 
     }
 
@@ -294,7 +320,7 @@ class Minotaur : public BaseEnemyType {
 
         ctx->draw(GetCurrentAnimator().sprite);
         ctx->draw(this->healthBarContainer);
-        ctx->draw(this->healthBar);
+        ctx->draw(this->healthBarFill);
         ctx->draw(healthTxtC->text);
     };
 
