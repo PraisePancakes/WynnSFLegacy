@@ -3,8 +3,7 @@
 
 
 	void GUIManager::_initHealthBarUI() {
-		std::shared_ptr<Entity> playerHealthE = EntityManager::GetInstance()->GetEntities("Player-Health")[0];
-		auto healthC = playerHealthE->GetComponent<CHealth>();
+		
 		healthBarContainer.setFillColor(sf::Color::Black);
 
 		healthBarContainer.setSize(sf::Vector2f(200, 20));

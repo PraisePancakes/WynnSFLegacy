@@ -53,31 +53,53 @@ struct EnemyState {
     ~EnemyState() {};
 };
 
+//TO DO : FIX ENEMY HEALTH BAR UI
+
 class BaseEnemyType {
 protected:
     std::shared_ptr<Entity> entity = nullptr;
+    std::shared_ptr<Entity> health_entity = nullptr;
     std::string name;
     bool _agro = false;
     float _agroRadius = 100;
     unsigned short int _damageOutput = 0;
-
+    sf::RectangleShape healthBarContainer;
+    sf::RectangleShape healthBar;
     
 public:
     BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage)
         : name(name), _agroRadius(agroRadius), _damageOutput(damage) {
         this->entity = EntityManager::GetInstance()->AddEntity("Enemy");
-        this->entity->AddComponent<CHealth>(health);
-        this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
+
+        this->health_entity = EntityManager::GetInstance()->AddEntity("Enemy-Health");
+        auto healthC = this->health_entity->AddComponent<CHealth>(health);
+
+
+        auto healthTxtC = health_entity->AddComponent<CText>("", "src/Assets/Fonts/PixelFont.ttf", 24, 0, 0, true);
+        healthTxtC->text.setOrigin(healthTxtC->text.getGlobalBounds().width / 2, healthTxtC->text.getGlobalBounds().height / 2);
        
+      
+     
+        healthBar.setSize(sf::Vector2f(healthC->MaxHP, 5));
+        healthBar.setFillColor(sf::Color::Green);
+        healthBar.setOrigin(healthBar.getSize().x / 2, healthBar.getSize().y / 2);
+
+        healthBarContainer.setSize(sf::Vector2f(healthC->MaxHP, 5));
+        healthBarContainer.setFillColor(sf::Color::Black);
+        healthBarContainer.setOrigin(healthBarContainer.getSize().x / 2, healthBarContainer.getSize().y / 2);
         
       
+        this->entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
+        
     }
 
+    
     virtual void SetCurrentAnimator(EnemyAnimationType animatorType) = 0;
     virtual std::shared_ptr<Entity> GetEntityInstance() = 0;
     virtual void Update() = 0;
     virtual CAnimator& GetCurrentAnimator() = 0;
     virtual void PlayCurrentAnimator(float dt) = 0;
+    virtual void Render(sf::RenderWindow* ctx) = 0;
 
 
     void DestroyEnemy() {
@@ -110,6 +132,37 @@ class Minotaur : public BaseEnemyType {
     EnemyAnimationType currentAnimationType = EnemyAnimationType::IDLE;
     EnemyState state;
 
+    void update_healthbar_ui() {
+        const auto healthTxtC = health_entity->GetComponent<CText>();
+        const auto healthC = health_entity->GetComponent<CHealth>();
+        
+
+        if (healthC->CurrHp <= 0) {
+            healthC->CurrHp = 0;
+        }
+
+        healthBarContainer.setPosition(this->entity->GetComponent<CTransform>()->Position.x , this->entity->GetComponent<CTransform>()->Position.y - (currentAnimator.sprite.getGlobalBounds().height / 2));
+        healthBar.setPosition(healthBarContainer.getPosition().x, healthBarContainer.getPosition().y);
+        healthBar.setSize(sf::Vector2f(healthC->CurrHp, 5));
+       
+        const int YELLOW_MIN = (healthC->MaxHP / 3) * 2;
+        const int YELLOW_MAX = (healthC->MaxHP / 2);
+        const int RED_MAX = YELLOW_MAX;
+
+        
+
+        if (healthC->CurrHp <= YELLOW_MIN && healthC->CurrHp > YELLOW_MAX) {
+            healthBar.setFillColor(sf::Color::Yellow);
+        }
+        else if (healthC->CurrHp <= RED_MAX) {
+            healthBar.setFillColor(sf::Color::Red);
+        }
+
+       
+        healthTxtC->text.setPosition(healthBarContainer.getPosition().x - (healthTxtC->text.getGlobalBounds().width / 2), healthBarContainer.getPosition().y - healthBarContainer.getGlobalBounds().height);
+        healthTxtC->text.setString(std::to_string(healthC->CurrHp));
+
+    }
 
     void update_animator() {
 
@@ -145,6 +198,8 @@ class Minotaur : public BaseEnemyType {
         unsigned short int damage = this->_damageOutput;
         if (state.state_attack && currentAnimator.finishedCurrentAnimation) {
             phealth->CurrHp -= damage;
+            //Test
+            this->health_entity->GetComponent<CHealth>()->CurrHp -= damage;
             currentAnimator.finishedCurrentAnimation = false;
         }
     }
@@ -227,19 +282,27 @@ class Minotaur : public BaseEnemyType {
 
             }
         }
-
-
         SetCurrentAnimator(direction);
         
         this->currentAnimator.sprite.setPosition(etc->Position.x, etc->Position.y);
         
     };
 
+
+    void Render(sf::RenderWindow* ctx) override {
+        const auto healthTxtC = this->health_entity->GetComponent<CText>();
+
+        ctx->draw(GetCurrentAnimator().sprite);
+        ctx->draw(this->healthBarContainer);
+        ctx->draw(this->healthBar);
+        ctx->draw(healthTxtC->text);
+    };
+
 public:
     Minotaur() : BaseEnemyType("Minotaur", 150, 100, 20) { 
         this->currentAnimator.ScaleToNxN(128, 128);
         this->entity->AddComponent<CCollider>(currentAnimator.frameWidth / 2);
-       
+        
     }
 
     std::shared_ptr<Entity> GetEntityInstance() override {
@@ -249,6 +312,7 @@ public:
    
 
     void Update() override {
+        update_healthbar_ui();
         update_animator();
         update_agro();
         update_damage_output();
@@ -310,6 +374,10 @@ public:
 
     void Update() {
         enemyType->Update();
+    }
+
+    void Render(sf::RenderWindow* ctx) {
+        this->enemyType->Render(ctx);
     }
 
 
