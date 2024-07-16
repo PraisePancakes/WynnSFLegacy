@@ -22,21 +22,21 @@
 
 class Game {
 
-	bool m_running = false;
-	sf::RenderWindow m_Window;
+	bool _running = false;
+	sf::RenderWindow _window;
 
-	sf::View m_Cam;
-	std::shared_ptr<Player> m_Player = nullptr;
-	std::unique_ptr<SceneManager> m_SceneManager;
-	std::unique_ptr<GUIManager> m_Gui;
+	sf::View _cam;
+	std::shared_ptr<Player> _player = nullptr;
+	std::unique_ptr<SceneManager> _sceneManager;
+	std::unique_ptr<GUIManager> _gui;
 
-	std::shared_ptr<QuestDB> m_QuestData;
-	std::unique_ptr<QuestBook> m_QuestBook;
-	std::unique_ptr<EnemyManager> m_EnemyManager;
+	std::shared_ptr<QuestDB> _questData;
+	std::unique_ptr<QuestBook> _questBook;
+	std::unique_ptr<EnemyManager> _enemyManager;
 
-	void sUserInput();
-	void sMovement();
-	void sUpdate();
+	void s_user_input();
+	void s_movement();
+	void s_update();
 	/*
 		since we are using a circle collider, the collision system will work based positioning of each circle collider when collision occurs
 
@@ -45,16 +45,16 @@ class Game {
 		 
 	*/
 
-	void checkCollision(Entity& e, EntityVec& ev);
-	void checkCollision(EntityVec& ev);
-	void sCollider();
-	void updateCam();
+	void check_collision(Entity& e, EntityVec& ev);
+
+	void s_collider();
+	void update_cam();
 
 
 
-	void spawnPlayer();
+	void spawn_player();
 
-	void sRenderer();
+	void s_renderer();
 
 
 public:

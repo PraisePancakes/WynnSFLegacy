@@ -7,20 +7,20 @@
 //TO-DO make chat log relative to player pos
 
 Game::Game(const std::string & title) {
-	m_running = true;
-	m_Window.create(sf::VideoMode::VideoMode(WINDOW_W, WINDOW_H), title, sf::Style::Titlebar | sf::Style::Close);
-	m_Window.setFramerateLimit(60);
-	m_Cam.setSize(WINDOW_W, WINDOW_H);
+	_running = true;
+	_window.create(sf::VideoMode::VideoMode(WINDOW_W, WINDOW_H), title, sf::Style::Titlebar | sf::Style::Close);
+	_window.setFramerateLimit(60);
+	_cam.setSize(WINDOW_W, WINDOW_H);
 
-	spawnPlayer();
-	this->m_EnemyManager = std::make_unique<EnemyManager>(&this->m_Window);
-	m_SceneManager = std::make_unique<SceneManager>(m_EnemyManager.get(), &this->m_Window, m_Player.get());
-	m_SceneManager->SetScene(Scenes::SCENE_MENU);
+	spawn_player();
+	this->_enemyManager = std::make_unique<EnemyManager>(&this->_window);
+	_sceneManager = std::make_unique<SceneManager>(_enemyManager.get(), &this->_window, _player.get());
+	_sceneManager->SetScene(Scenes::SCENE_MENU);
 
-	m_QuestData = std::make_shared<QuestDB>(m_Player.get());
-	m_QuestBook = std::make_unique<QuestBook>(m_QuestData.get(), &this->m_Window);
+	_questData = std::make_shared<QuestDB>(_player.get());
+	_questBook = std::make_unique<QuestBook>(_questData.get(), &this->_window);
 
-	this->m_Gui = std::make_unique<GUIManager>(&m_Window);
+	this->_gui = std::make_unique<GUIManager>(&_window);
 
 
 };
@@ -28,87 +28,87 @@ Game::Game(const std::string & title) {
 
 void Game::Run() {
 
-	while (m_running) {
-		m_Window.clear();
+	while (_running) {
+		_window.clear();
 	
-		sUserInput();
-		sUpdate();
+		s_user_input();
+		s_update();
 		
-		if (m_SceneManager->GetCurrentScene()->GetID() == Scenes::SCENE_QUIT) {
-			m_running = false;
-			m_Window.close();
+		if (_sceneManager->GetCurrentScene()->GetID() == Scenes::SCENE_QUIT) {
+			_running = false;
+			_window.close();
 		}
 		//handle game events
-		if (m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION) {
-			sCollider();
-			sMovement();
+		if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION) {
+			s_collider();
+			s_movement();
 			
 		}
 
 
-		sRenderer();
+		s_renderer();
 		EntityManager::GetInstance()->Update();
-		m_Window.display();
+		_window.display();
 
 	}
 };
 
 
-void Game::sUserInput() {
+void Game::s_user_input() {
 	sf::Event e;
 
-	while (m_Window.pollEvent(e)) {
+	while (_window.pollEvent(e)) {
 		if (e.type == sf::Event::EventType::Closed) {
-			m_Window.close();
-			m_running = false;
+			_window.close();
+			_running = false;
 		}
 
 
-		if (m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION) {
-			m_Player->HandleInput(&e);
-			m_Gui->HandleEvents(&e);
-			m_QuestBook->HandleEvents();
+		if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION) {
+			_player->HandleInput(&e);
+			_gui->HandleEvents(&e);
+			_questBook->HandleEvents();
 			
 		}
 		
 
 
-		m_SceneManager->HandleEvents(&e);
+		_sceneManager->HandleEvents(&e);
 	}
 
 };
 
-void Game::sMovement() {
-	if (m_QuestBook->IsOpen() || m_SceneManager->IsTransitioning()) return;
+void Game::s_movement() {
+	if (_questBook->IsOpen() || _sceneManager->IsTransitioning()) return;
 
-	m_Player->HandleMovement();
+	_player->HandleMovement();
 };
 
-void Game::updateCam() {
-	m_Cam.setCenter(m_Player->GetPos().x, m_Player->GetPos().y);
-	m_Window.setView(m_Cam);
+void Game::update_cam() {
+	_cam.setCenter(_player->GetPos().x, _player->GetPos().y);
+	_window.setView(_cam);
 }
 
-void Game::sUpdate() {
+void Game::s_update() {
 	
-	if (m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION ) {
+	if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION ) {
 		
-		if (!m_QuestBook->IsOpen() ) {
-			m_Player->Update();	
-			updateCam();
-			m_Gui->Update();
-			//put gui->supdate in here for gui transition effect
+		if (!_questBook->IsOpen() ) {
+			_player->Update();	
+			update_cam();
+			_gui->Update();
+			//put gui->s_update in here for gui transition effect
 		}	
-		m_QuestData->Update();
-		m_QuestBook->Update();
+		_questData->Update();
+		_questBook->Update();
 
-		if (!m_SceneManager->IsTransitioning()) {
-			m_EnemyManager->Update();
+		if (!_sceneManager->IsTransitioning()) {
+			_enemyManager->Update();
 		}
 		
 	
 	}
-	m_SceneManager->Update();
+	_sceneManager->Update();
 }
 /*
 	since we are using a circle collider, the collision system will work based positioning of each circle collider when collision occurs
@@ -118,7 +118,7 @@ void Game::sUpdate() {
 
 */
 
-void Game::checkCollision(Entity& e, EntityVec& ev) {
+void Game::check_collision(Entity& e, EntityVec& ev) {
 	float ex = e.GetComponent<CTransform>()->Position.x;
 	float ey = e.GetComponent<CTransform>()->Position.y;
 
@@ -168,44 +168,44 @@ void Game::checkCollision(Entity& e, EntityVec& ev) {
 }
 
 
-void Game::sCollider() {
-	EntityVec tlTiles = m_SceneManager->GetCurrentScene()->GetTopLayer();
+void Game::s_collider() {
+	EntityVec tlTiles = _sceneManager->GetCurrentScene()->GetTopLayer();
 	EntityVec enemies = EntityManager::GetInstance()->GetEntities("Enemy");
 	if (enemies.size() > 0) {
 
 		for (auto& enemy : enemies) {
-			checkCollision(*enemy, enemies);
+			check_collision(*enemy, enemies);
 			
 		}
 		
 	}
-	checkCollision(*m_Player->GetEntityInstance(), enemies);
-	checkCollision(*m_Player->GetEntityInstance(), tlTiles);
+	check_collision(*_player->GetEntityInstance(), enemies);
+	check_collision(*_player->GetEntityInstance(), tlTiles);
 };
 
 
 //TEST
 
 //move this to scenemanager
-void Game::spawnPlayer() {
+void Game::spawn_player() {
 	
 	float spawnX = WINDOW_W / 2 + 50;
 	float spawnY = WINDOW_H / 2 + 100;
 
-	m_Player = std::make_shared<Player>(spawnX, spawnY);
+	_player = std::make_shared<Player>(spawnX, spawnY);
 
 };
 
-void Game::sRenderer() {
-	m_SceneManager->RenderScene();
+void Game::s_renderer() {
+	_sceneManager->RenderScene();
 
-	if (m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION && !m_QuestBook->IsOpen()) {
-		if (!m_SceneManager->IsTransitioning()) {
-			m_Gui->Render();
+	if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION && !_questBook->IsOpen()) {
+		if (!_sceneManager->IsTransitioning()) {
+			_gui->Render();
 		}
-		if (!m_SceneManager->IsTransitioning()) {
-			m_Player->Render(this->m_Window);
-			m_EnemyManager->Render();
+		if (!_sceneManager->IsTransitioning()) {
+			_player->Render(this->_window);
+			_enemyManager->Render();
 		}
 		
 
@@ -213,9 +213,9 @@ void Game::sRenderer() {
 
 	
 	
-	if (m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && m_SceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION && !m_SceneManager->IsTransitioning()) {
+	if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION && !_sceneManager->IsTransitioning()) {
 
-		m_QuestBook->Render();
+		_questBook->Render();
 	}
 
 	
