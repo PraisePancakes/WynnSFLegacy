@@ -44,7 +44,7 @@
 */
 
 
-enum class QuestID {
+enum class QUESTID {
 	QUEST_INVALID = -1,
 	QUEST_A_NEW_BEGINNING,
 	QUEST_ENZANS_BROTHER,
@@ -125,161 +125,45 @@ class Quest {
 	*/
 	
 	std::string _title = "";
-	QuestID _id = QuestID::QUEST_INVALID;
+	QUESTID _id = QUESTID::QUEST_INVALID;
 
-	int currIdxToProcess = 0;
-	std::vector<Process*> processes {};
+	int _currIdxToProcess = 0;
+	std::vector<Process*> _processes {};
 
 public:
 	QuestState state{};
 	
 	//create add process method
-	Quest(const std::string& title, QuestID id, const int required) : _title(title), _id(id), RequiredLevel(required) {};
+	Quest(const std::string& title, QUESTID id, const int required);
 
-	int RequiredLevel = 0;
+	int requiredLevel = 0;
 
-	std::string GetTitle() const {
-		return _title;
-	}
+	std::string GetTitle() const;
 
-	std::string GetDescription() const {
-		if (currIdxToProcess < processes.size() && !state.locked) {
-			return processes[currIdxToProcess]->desc;
-		}
-		else if (state.locked) {
-			const std::string lockedMessage = "Unlock at level" + std::to_string(RequiredLevel);
-			return lockedMessage;
-		} else if(state.completed) 
-			return "Completed";
-	}
+	std::string GetDescription() const;
 
-	void Update() {
-		if (currIdxToProcess < processes.size() && processes[currIdxToProcess]->isSuccessful()) {
-			currIdxToProcess++;
-		}
-	}
+	void Update();
 
-	void addProcess(const std::string& description, ProcessType callback) {
-		std::cout << processes.size();
-		processes.push_back(new Process(description, callback));
-	}
+	void AddProcess(const std::string& description, ProcessType callback);
 
-	bool processed() {
-		return currIdxToProcess >= processes.size();
-	}
+	bool processed();
 
-	~Quest() {
-		for (size_t i = 0; i < processes.size(); i++) {
-			delete processes[i];
-		}
-	};
+	~Quest();
 };
 
 
 class QuestDB {
 
-protected:
+private:
 	std::map<int, Quest*> table;
 	Player* player;
-
-	
-	void initQuests() {
-
-		table[(int)QuestID::QUEST_A_NEW_BEGINNING] = new Quest("A new Beginning", QuestID::QUEST_A_NEW_BEGINNING, 0);
-		auto q1 = table[(int)QuestID::QUEST_A_NEW_BEGINNING];
-		q1->addProcess("Explore a little bit, harness your surroundings", [this]() -> bool {
-			//(first step of the quest to process)
-		
-			static size_t __func_calls = 0;
-			
-			static Core::Physics::Vec2D plStartingPos;
-
-			if (__func_calls == 0) {
-				plStartingPos = player->GetPos();
-
-				__func_calls++;
-			}
-
-			Core::Physics::Vec2D plCurrentPos = player->GetPos();
-
-			float x1 = plStartingPos.x;
-			float x2 = plCurrentPos.x;
-			float y1 = plStartingPos.y;
-			float y2 = plCurrentPos.y;
-			float dx = x2 - x1;
-			float dy = y2 - y1;
-
-			float distance = std::sqrt((dx)*dx + (dy)*dy);
-
-
-			if (distance >= 500) {
-				return true;
-			}
-
-
-
-			return false;
-			});
-
-			
-
-			table[(int)QuestID::QUEST_ENZANS_BROTHER] = new Quest("Enzan's Brother", QuestID::QUEST_ENZANS_BROTHER, 1);
-			auto q2 = table[(int)QuestID::QUEST_ENZANS_BROTHER];
-			q2->addProcess("Talk to Enzan close to the exit of Ragni", [this]() -> bool {
-				
-
-				return false;
-				});
-
-			q2->addProcess("test", [this]()->bool {
-				//some process
-				return false;
-				});
-
-
-		
-	};
-
-
+	void init_quests();
 
 public:
-	QuestDB(Player* player) {
-		this->player = player;
-		initQuests();
-	};
-
-	void Update() {
-		
-		for (auto& pair : table) {
-			if (pair.second) {
-
-				
-				if (player->CurrentLevel >= pair.second->RequiredLevel && !pair.second->state.isCompleted()) {
-					
-					pair.second->state.setInProgress();
-					
-				}
-	
-				if (pair.second->state.isInProgress() && !pair.second->state.isCompleted()) {
-					pair.second->Update();
-					if (pair.second->processed()) {
-						std::cout << pair.second->GetTitle();
-						pair.second->state.complete();
-					}
-				}
-			}
-		
-			
-		}
-	
-		
-	}
-
-	[[nodiscard]] std::map<int, Quest*>& GetTable() {
-		return table;
-	};
-
-	~QuestDB() {};
+	QuestDB(Player* player);
+	void Update();
+	[[nodiscard]] std::map<int, Quest*>& GetTable();
+	~QuestDB() = default;
 };
 
 

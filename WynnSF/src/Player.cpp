@@ -9,38 +9,38 @@
 //TO:DO REFACTOR KIT TYPE CASTING
 
 Player::Player(float spawnX, float spawnY) {
-	this->entity = EntityManager::GetInstance()->AddEntity("Player");
+	this->_entity = EntityManager::GetInstance()->AddEntity("Player");
 	auto playerHealthE = EntityManager::GetInstance()->AddEntity("Player-Health");
 
-	auto tc = entity->AddComponent<CTransform>(Core::Physics::Vec2D(spawnX, spawnY), Core::Physics::Vec2D(0, 0), 0);
-	entity->AddComponent<CInput>();
+	auto tc = _entity->AddComponent<CTransform>(Core::Physics::Vec2D(spawnX, spawnY), Core::Physics::Vec2D(0, 0), 0);
+	_entity->AddComponent<CInput>();
 
 
 	auto healthC = playerHealthE->AddComponent<CHealth>(100);
 	auto healthTxtC= playerHealthE->AddComponent<CText>("", "src/Assets/Fonts/PixelFont.ttf", 24, 0, 0, true);
-	_initKits();
+	init_kits();
 };
 
-void Player::_initKits() {
+void Player::init_kits() {
 
-	this->kits.push_back(std::make_shared<ArcherKit>());
-	this->kits.push_back(std::make_shared<AssassinKit>());
-	this->kits.push_back(std::make_shared<WarriorKit>());
-	this->kits.push_back(std::make_shared<WizardKit>());
+	this->_kits.push_back(std::make_shared<ArcherKit>());
+	this->_kits.push_back(std::make_shared<AssassinKit>());
+	this->_kits.push_back(std::make_shared<WarriorKit>());
+	this->_kits.push_back(std::make_shared<WizardKit>());
 }
 
 void Player::SetKit(KitTypes kit) {
 
-	this->currentKitType = kit;
-	std::shared_ptr<Kit> kitPtr = this->kits[(int)currentKitType];
+	this->_currentKitType = kit;
+	std::shared_ptr<Kit> kitPtr = this->_kits[(int)_currentKitType];
 	if (kitPtr) {
-		auto c = this->entity->AddComponent<CCollider>(kitPtr->GetCollider());
+		auto c = this->_entity->AddComponent<CCollider>(kitPtr->GetCollider());
 		
 	}
 }
 
-void Player::_initAnimation(AnimationType type) {
-	std::shared_ptr<Kit> kitPtr = this->kits[(int)currentKitType];
+void Player::init_animation(AnimationType type) {
+	std::shared_ptr<Kit> kitPtr = this->_kits[(int)_currentKitType];
 
 		if (kitPtr) {
 			auto archerKit = dynamic_cast<ArcherKit*>(kitPtr.get());
@@ -74,24 +74,24 @@ static void validateHealth() {
 	}
 }
 
-void Player::_updateMovement() {
+void Player::update_movement() {
 
-	_setPosRelativeToTransform();
+	set_pos_relative_to_transform();
 	
-	if (IsMoving() && !movingAnimationInitialized) {
-		_initAnimation(AnimationType::RUN);
-		movingAnimationInitialized = true;
+	if (IsMoving() && !_movingAnimationInitialized) {
+		init_animation(AnimationType::RUN);
+		_movingAnimationInitialized = true;
 	}
-	else if (!IsMoving() && movingAnimationInitialized) {
-		_initAnimation(AnimationType::IDLE);
-		movingAnimationInitialized = false;
+	else if (!IsMoving() && _movingAnimationInitialized) {
+		init_animation(AnimationType::IDLE);
+		_movingAnimationInitialized = false;
 	}
 
-	if (lookingLeft) {
-		_initAnimation(AnimationType::LOOKING_LEFT);
+	if (_lookingLeft) {
+		init_animation(AnimationType::LOOKING_LEFT);
 	}
 	else {
-		_initAnimation(AnimationType::LOOKING_RIGHT);
+		init_animation(AnimationType::LOOKING_RIGHT);
 	}
 
 }
@@ -102,7 +102,7 @@ void Player::Update() {
 		return;
 	}
 	validateHealth();
-	_updateMovement();
+	update_movement();
 	
 
 }
@@ -111,7 +111,7 @@ void Player::Render(sf::RenderWindow& ctx) {
 	if (_disabled) {
 		return;
 	}
-	std::shared_ptr<Kit> kitPtr = this->kits[(int)currentKitType];
+	std::shared_ptr<Kit> kitPtr = this->_kits[(int)_currentKitType];
 
 	if (kitPtr) {
 		auto archerKit = dynamic_cast<ArcherKit*>(kitPtr.get());
@@ -141,12 +141,12 @@ void Player::Render(sf::RenderWindow& ctx) {
 };
 
 
-void Player::_setPosRelativeToTransform() {
+void Player::set_pos_relative_to_transform() {
 	
-	auto tc = this->entity->GetComponent<CTransform>();
+	auto tc = this->_entity->GetComponent<CTransform>();
 	
 
-	std::shared_ptr<Kit> kitPtr = this->kits[(int)currentKitType];
+	std::shared_ptr<Kit> kitPtr = this->_kits[(int)_currentKitType];
 	if (kitPtr) {
 		auto archerKit = dynamic_cast<ArcherKit*>(kitPtr.get());
 		if (archerKit) {
@@ -178,11 +178,11 @@ void Player::_setPosRelativeToTransform() {
 
 void Player::SetPos(float x, float y) {
 	
-	auto tc = this->entity->GetComponent<CTransform>();
+	auto tc = this->_entity->GetComponent<CTransform>();
 	tc->Position.x = x;
 	tc->Position.y = y;
 
-	std::shared_ptr<Kit> kitPtr = this->kits[(int)currentKitType];
+	std::shared_ptr<Kit> kitPtr = this->_kits[(int)_currentKitType];
 	if (kitPtr) {
 		auto archerKit = dynamic_cast<ArcherKit*>(kitPtr.get());
 		if (archerKit) {
@@ -214,23 +214,23 @@ void Player::SetPos(float x, float y) {
 }
 
 bool Player::IsMoving() {
-	if (entity->GetComponent<CTransform>()->Velocity.x != 0 || entity->GetComponent<CTransform>()->Velocity.y != 0) {
-		moving = true;
+	if (_entity->GetComponent<CTransform>()->Velocity.x != 0 || _entity->GetComponent<CTransform>()->Velocity.y != 0) {
+		_moving = true;
 		return true;
 	}
-	moving = false;
+	_moving = false;
 	return false;
 }
 
 void Player::HandleInput(sf::Event* e) {
 	
-	auto ic = entity->GetComponent<CInput>();
+	auto ic = _entity->GetComponent<CInput>();
 	if (_disabled) {
 			ic->iup = false;
 			ic->ileft = false;
 			ic->idown = false;
 			ic->iright = false;
-			sprinting = false;
+			_sprinting = false;
 			return;
 	}
 	if (e->type == sf::Event::KeyPressed) {
@@ -254,7 +254,7 @@ void Player::HandleInput(sf::Event* e) {
 
 		if (e->key.scancode == 128) {
 
-			sprinting = true;
+			_sprinting = true;
 		}
 
 
@@ -277,25 +277,25 @@ void Player::HandleInput(sf::Event* e) {
 		}
 
 		if (e->key.scancode == 128) {
-			sprinting = false;
+			_sprinting = false;
 		}
 	}
 }
 
 
 Core::Physics::Vec2D Player::GetPos() const {
-	std::shared_ptr<CTransform> tc = entity->GetComponent<CTransform>();
+	std::shared_ptr<CTransform> tc = _entity->GetComponent<CTransform>();
 	return tc->Position;
 };
 
 void Player::HandleMovement() {
 	float MOVEMENT_SPEED = 3.0f;
 
-	auto playerInput = entity->GetComponent<CInput>();
+	auto playerInput = _entity->GetComponent<CInput>();
 	
-	auto tc = entity->GetComponent<CTransform>();
+	auto tc = _entity->GetComponent<CTransform>();
 
-	if (sprinting) {
+	if (_sprinting) {
 		MOVEMENT_SPEED = 4.f;
 	}
 
@@ -308,12 +308,12 @@ void Player::HandleMovement() {
 	}
 
 	if (playerInput->ileft) {
-		lookingLeft = true;
+		_lookingLeft = true;
 		velX -= MOVEMENT_SPEED;
 	}
 
 	if (playerInput->iright) {
-		lookingLeft = false;
+		_lookingLeft = false;
 		velX += MOVEMENT_SPEED;
 	}
 
@@ -335,3 +335,4 @@ void Player::HandleMovement() {
 
 
 }
+
