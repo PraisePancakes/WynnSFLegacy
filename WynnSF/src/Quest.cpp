@@ -47,8 +47,8 @@
 
 	void QuestDB::init_quests() {
 
-		table[(int)QUESTID::QUEST_A_NEW_BEGINNING] = new Quest("A new Beginning", QUESTID::QUEST_A_NEW_BEGINNING, 0);
-		auto q1 = table[(int)QUESTID::QUEST_A_NEW_BEGINNING];
+		_table[(int)QUESTID::QUEST_A_NEW_BEGINNING] = new Quest("A new Beginning", QUESTID::QUEST_A_NEW_BEGINNING, 0);
+		auto q1 = _table[(int)QUESTID::QUEST_A_NEW_BEGINNING];
 		q1->AddProcess("Explore a little bit, harness your surroundings", [this]() -> bool {
 			//(first step of the quest to process)
 
@@ -57,12 +57,12 @@
 			static Core::Physics::Vec2D plStartingPos;
 
 			if (__func_calls == 0) {
-				plStartingPos = player->GetPos();
+				plStartingPos = _player->GetPos();
 
 				__func_calls++;
 			}
 
-			Core::Physics::Vec2D plCurrentPos = player->GetPos();
+			Core::Physics::Vec2D plCurrentPos = _player->GetPos();
 
 			float x1 = plStartingPos.x;
 			float x2 = plCurrentPos.x;
@@ -85,8 +85,8 @@
 
 
 
-		table[(int)QUESTID::QUEST_ENZANS_BROTHER] = new Quest("Enzan's Brother", QUESTID::QUEST_ENZANS_BROTHER, 1);
-		auto q2 = table[(int)QUESTID::QUEST_ENZANS_BROTHER];
+		_table[(int)QUESTID::QUEST_ENZANS_BROTHER] = new Quest("Enzan's Brother", QUESTID::QUEST_ENZANS_BROTHER, 1);
+		auto q2 = _table[(int)QUESTID::QUEST_ENZANS_BROTHER];
 		q2->AddProcess("Talk to Enzan close to the exit of Ragni", [this]() -> bool {
 
 
@@ -106,17 +106,17 @@
 
 
 	QuestDB::QuestDB(Player* player) {
-		this->player = player;
+		this->_player = player;
 		init_quests();
 	};
 
 	void QuestDB::Update() {
 
-		for (auto& pair : table) {
+		for (auto& pair : _table) {
 			if (pair.second) {
 
 
-				if (player->currentLevel >= pair.second->requiredLevel && !pair.second->state.isCompleted()) {
+				if (_player->currentLevel >= pair.second->requiredLevel && !pair.second->state.isCompleted()) {
 
 					pair.second->state.setInProgress();
 
@@ -138,7 +138,7 @@
 	}
 
 	[[nodiscard]] std::map<int, Quest*>& QuestDB::GetTable() {
-		return table;
+		return _table;
 	};
 
 	

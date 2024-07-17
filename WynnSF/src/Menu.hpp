@@ -10,23 +10,23 @@
 
 class Menu {
 	
-	sf::RenderWindow* ctx;
+	sf::RenderWindow* _ctx;
 
-	Core::Physics::Vec2D getRandomParticlePos(sf::RenderWindow* ctx);
+	Core::Physics::Vec2D gen_random_particle_pos(sf::RenderWindow* ctx);
 
 
-	void renderMenuText();
+	void render_menu_text();
 
-	void renderMenuParticles();
+	void render_menu_particles();
 	
 
-	void initMenuParticles();
+	void init_menu_particles();
 
-	void initMenu();
-	void renderLogo();
+	void init_menu();
+	void render_logo();
 	
 
-	void renderMenuButtons();
+	void render_menu_buttons();
 
 
 

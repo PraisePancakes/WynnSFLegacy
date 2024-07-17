@@ -9,45 +9,20 @@ typedef std::vector<std::shared_ptr<Enemy>> EnemyVec;
 class EnemyManager {
 	
 private:
-	sf::RenderWindow* ctx{nullptr};
-	EnemyVec enemies;
+	sf::RenderWindow* _ctx{nullptr};
+	EnemyVec _enemies;
 
 public:
-	EnemyManager(sf::RenderWindow* ctx) {
-		this->ctx = ctx;
-		
-	};
-	void AddEnemy(EnemyTypes type, Core::Physics::Vec2D pos) {
-		std::shared_ptr<Enemy> e = std::make_shared<Enemy>(type, pos);
-		enemies.push_back(e);
-	};
+	EnemyManager(sf::RenderWindow* ctx);
+	void AddEnemy(EnemyTypes type, Core::Physics::Vec2D pos);
 
-	EnemyVec& GetEnemyVec() {
-		return enemies;
-	};
+	EnemyVec& GetEnemyVec();
 
-	void Update() {
-		if (enemies.size() > 0) {
-			for (auto& e : enemies) {
+	void Update();
+	void Render();
 
-				e->Update();
-			}
-		}
-	};
-	void Render() {
-		
-		if (enemies.size() > 0) {
-			
-			for (auto& e : enemies) {
-				e->Render(ctx);
-			}
-		}
-	};
+	void ClearEnemies();
 
-	void ClearEnemies() {
-		enemies.clear();
-	}
-
-	~EnemyManager() {};
+	~EnemyManager();
 
 };

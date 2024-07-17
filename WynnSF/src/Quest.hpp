@@ -155,8 +155,8 @@ public:
 class QuestDB {
 
 private:
-	std::map<int, Quest*> table;
-	Player* player;
+	std::map<int, Quest*> _table;
+	Player* _player;
 	void init_quests();
 
 public:

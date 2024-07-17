@@ -1,31 +1,31 @@
 #include "SceneManager.hpp"
 #include "../core/Utils/Utils.hpp"
 
-static std::string getSceneName(Scenes id) {
+static std::string getSceneName(SCENES id) {
 	switch (id) {
-	case Scenes::SCENE_RAGNI:
+	case SCENES::SCENE_RAGNI:
 		return "Ragni";
-	case Scenes::SCENE_DETLAS:
+	case SCENES::SCENE_DETLAS:
 		return "Detlas";
-	case Scenes::SCENE_PIGMANS:
+	case SCENES::SCENE_PIGMANS:
 		return "Pigmen's Ravines";
-	case Scenes::SCENE_ALMUJ:
+	case SCENES::SCENE_ALMUJ:
 		return "Almuj";
 	default: return "";
 	}
 };
 
-std::string SceneManager::getSceneFilePath(Scenes id) {
+std::string SceneManager::getSceneFilePath(SCENES id) {
 		
 		switch (id) {
-		case Scenes::SCENE_RAGNI:
+		case SCENES::SCENE_RAGNI:
 			return "src/Data/Scenes/ragni.txt";
 			
-		case Scenes::SCENE_DETLAS:
+		case SCENES::SCENE_DETLAS:
 			return "";
-		case Scenes::SCENE_PIGMANS:
+		case SCENES::SCENE_PIGMANS:
 			return "src/Data/Scenes/pigmans.txt";
-		case Scenes::SCENE_ALMUJ:
+		case SCENES::SCENE_ALMUJ:
 			return "";
 		default:
 			return "";
@@ -35,23 +35,23 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	
 	};
 
-	void SceneManager::initTable() {
-		for (Scenes scene = (Scenes)0; scene < Scenes::SCENE_QUIT; scene = static_cast<Scenes>((size_t)scene + 1)) {
+	void SceneManager::init_table() {
+		for (SCENES scene = (SCENES)0; scene < SCENES::SCENE_QUIT; scene = static_cast<SCENES>((size_t)scene + 1)) {
 			std::shared_ptr<Scene> s = std::make_shared<Scene>(scene, getSceneFilePath(scene));
 
-			sceneTable.push_back(s);
+			_sceneTable.push_back(s);
 		}
 	};
 
-	void SceneManager::handleMenuEvent() {
-		if (currentSceneToProcess == Scenes::SCENE_MENU) {
-			int event = menu->GetMenuEvents();
+	void SceneManager::handle_menu_event() {
+		if (_currentSceneToProcess == SCENES::SCENE_MENU) {
+			int event = _menu->GetMenuEvents();
 			switch (event) {
 			case 1:
-				currentSceneToProcess = Scenes::SCENE_KIT_SELECTION;
+				_currentSceneToProcess = SCENES::SCENE_KIT_SELECTION;
 				break;
 			case 2:
-				currentSceneToProcess = Scenes::SCENE_QUIT;
+				_currentSceneToProcess = SCENES::SCENE_QUIT;
 				break;
 
 
@@ -61,23 +61,23 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 	}
 
 
-	void SceneManager::updateTransitioningPlayer() {
-		std::vector<Entrance> entranceV = this->sceneTable[(int)currentSceneToProcess]->GetEntranceVector();
-		Core::Physics::Vec2D plPos = player->GetPos();
+	void SceneManager::update_transitioning_player() {
+		std::vector<Entrance> entranceV = this->_sceneTable[(int)_currentSceneToProcess]->GetEntranceVector();
+		Core::Physics::Vec2D plPos = _player->GetPos();
 
 		for (size_t i = 0; i < entranceV.size(); i++) {
 			if (plPos.x >= entranceV[i].pos.x && plPos.x <= entranceV[i].pos.x + entranceV[i].size.x) {
 				if (plPos.y >= entranceV[i].pos.y && plPos.y <= entranceV[i].pos.y + entranceV[i].size.y) {
-					Scenes targetScene = currentSceneToProcess;
+					SCENES targetScene = _currentSceneToProcess;
 					std::vector<Entrance> targetEntrance = {};
 					switch (entranceV[i].side) {
-					case Side::SIDE_LEFT:
+					case SCENE_SIDES::SIDE_LEFT:
 					{
-						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->left;
-						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						targetScene = this->_sceneTable[(int)_currentSceneToProcess]->GetExternals()->left;
+						targetEntrance = this->_sceneTable[(int)targetScene]->GetEntranceVector();
 						for (auto& e : targetEntrance) {
-							if (e.side == Side::SIDE_RIGHT) {
-								player->SetPos(e.pos.x - 256, e.pos.y);
+							if (e.side == SCENE_SIDES::SIDE_RIGHT) {
+								_player->SetPos(e.pos.x - 256, e.pos.y);
 							}
 						}
 
@@ -85,37 +85,37 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 						
 						
 						break;
-					case Side::SIDE_RIGHT:
+					case SCENE_SIDES::SIDE_RIGHT:
 					{
-						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->right;
-						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						targetScene = this->_sceneTable[(int)_currentSceneToProcess]->GetExternals()->right;
+						targetEntrance = this->_sceneTable[(int)targetScene]->GetEntranceVector();
 						for (auto& e : targetEntrance) {
-							if (e.side == Side::SIDE_LEFT) {
-								player->SetPos(e.pos.x + 256, e.pos.y);
+							if (e.side == SCENE_SIDES::SIDE_LEFT) {
+								_player->SetPos(e.pos.x + 256, e.pos.y);
 							}
 						}
 					}
 					
 						break;
-					case Side::SIDE_TOP:
+					case SCENE_SIDES::SIDE_TOP:
 					{
-						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->top;
-						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						targetScene = this->_sceneTable[(int)_currentSceneToProcess]->GetExternals()->top;
+						targetEntrance = this->_sceneTable[(int)targetScene]->GetEntranceVector();
 						for (auto& e : targetEntrance) {
-							if (e.side == Side::SIDE_BOTTOM) {
-								player->SetPos(e.pos.x, e.pos.y - 256);
+							if (e.side == SCENE_SIDES::SIDE_BOTTOM) {
+								_player->SetPos(e.pos.x, e.pos.y - 256);
 							}
 						}
 					}
 									
 						break;
-					case Side::SIDE_BOTTOM:
+					case SCENE_SIDES::SIDE_BOTTOM:
 					{
-						targetScene = this->sceneTable[(int)currentSceneToProcess]->GetExternals()->bottom;
-						targetEntrance = this->sceneTable[(int)targetScene]->GetEntranceVector();
+						targetScene = this->_sceneTable[(int)_currentSceneToProcess]->GetExternals()->bottom;
+						targetEntrance = this->_sceneTable[(int)targetScene]->GetEntranceVector();
 						for (auto& e : targetEntrance) {
-							if (e.side == Side::SIDE_TOP) {
-								player->SetPos(e.pos.x, e.pos.y + 256);
+							if (e.side == SCENE_SIDES::SIDE_TOP) {
+								_player->SetPos(e.pos.x, e.pos.y + 256);
 							}
 						}
 					}
@@ -131,23 +131,23 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 		}
 	}
 
-	void SceneManager::initTransition() {
-		sf::View v = ctx->getView();
+	void SceneManager::init_transition() {
+		sf::View v = _ctx->getView();
 		sf::Vector2f size = { v.getSize().x , v.getSize().y  };
-		this->transititionOverlay = std::make_shared<sf::RectangleShape>(size);
-		transititionOverlay->setFillColor(sf::Color::Transparent);
+		this->_transititionOverlay = std::make_shared<sf::RectangleShape>(size);
+		_transititionOverlay->setFillColor(sf::Color::Transparent);
 		
 	};
 
-	void SceneManager::updateTransitioningPos() {
-		sf::View v = ctx->getView();
+	void SceneManager::update_transitioning_pos() {
+		sf::View v = _ctx->getView();
 		sf::Vector2f topLeft = { v.getCenter().x - (v.getSize().x / 2) , v.getCenter().y - (v.getSize().y / 2)};
-		this->transititionOverlay->setPosition(topLeft);
+		this->_transititionOverlay->setPosition(topLeft);
 	};
 
-	void SceneManager::updateTransitioningAnimation() {
+	void SceneManager::update_transitioning_animation() {
 
-			sf::Color color = transititionOverlay->getFillColor();
+			sf::Color color = _transititionOverlay->getFillColor();
 			static bool flag = false;
 			static int __iter_count = 0;
 			const int animation_step = 10;
@@ -156,7 +156,7 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 				
 				color.a += animation_step;
 				__iter_count += animation_step;
-				transititionOverlay->setFillColor(color);
+				_transititionOverlay->setFillColor(color);
 				if (__iter_count >= 255) {
 					flag = true;
 				}
@@ -164,9 +164,9 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 			else if (flag) {
 				color.a -= animation_step;
 				__iter_count -= animation_step;
-				transititionOverlay->setFillColor(color);
+				_transititionOverlay->setFillColor(color);
 				if (__iter_count <= 0) {
-					isTransitioning = false;
+					_isTransitioning = false;
 					flag = false;
 				}
 			}
@@ -175,96 +175,96 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 
 	
 
-	void SceneManager::updateTransitioning() {
-		if (isTransitioning) {
-			player->Disable();
-			updateTransitioningAnimation();
-			updateTransitioningPos();
+	void SceneManager::update_transitioning() {
+		if (_isTransitioning) {
+			_player->Disable();
+			update_transitioning_animation();
+			update_transitioning_pos();
 
 		}
 		else {
-			updateTransitioningPlayer();
-			player->Enable();
+			update_transitioning_player();
+			_player->Enable();
 		}
 		
 	}
 
 	void SceneManager::Update() {
-		if (currentSceneToProcess == Scenes::SCENE_MENU || currentSceneToProcess == Scenes::SCENE_KIT_SELECTION || currentSceneToProcess == Scenes::SCENE_QUIT) {
+		if (_currentSceneToProcess == SCENES::SCENE_MENU || _currentSceneToProcess == SCENES::SCENE_KIT_SELECTION || _currentSceneToProcess == SCENES::SCENE_QUIT) {
 			return;
 		}
-		updateTransitioning();
-		updateIntroduction();
+		update_transitioning();
+		update_introduction();
 	}
 
-	 void SceneManager::updateIntroductionColor() {
-		sf::Color currentColor = this->currentIntroText->text.getFillColor();
+	 void SceneManager::update_introduction_color() {
+		sf::Color currentColor = this->_currentIntroText->text.getFillColor();
 		currentColor.a -= .001;
-		currentIntroText->text.setFillColor(currentColor);
+		_currentIntroText->text.setFillColor(currentColor);
 	}
 
-	void SceneManager::initIntroduction() {
+	void SceneManager::init_introduction() {
 		
 
-		currentIntroText = nullptr;
-		sf::View view = ctx->getView();
+		_currentIntroText = nullptr;
+		sf::View view = _ctx->getView();
 		sf::Vector2f center(view.getCenter().x, view.getCenter().y);
-		const std::string sceneName = getSceneName(currentSceneToProcess);
-		this->currentIntroText = std::make_shared<CText>("Welcome to " + sceneName + "!", "src/Assets/Fonts/RingBearer.TTF", 72, 0, 0, true);
+		const std::string sceneName = getSceneName(_currentSceneToProcess);
+		this->_currentIntroText = std::make_shared<CText>("Welcome to " + sceneName + "!", "src/Assets/Fonts/RingBearer.TTF", 72, 0, 0, true);
 	
 	}
 
-	void SceneManager::updateIntroduction() {
+	void SceneManager::update_introduction() {
 		
-			if (this->currentIntroText != nullptr) {
-				updateIntroductionColor();
-				updateIntroductionPos();
+			if (this->_currentIntroText != nullptr) {
+				update_introduction_color();
+				update_introduction_pos();
 			}
 		
 		
 	};
 
-	void SceneManager::updateIntroductionPos() {
-		sf::View view = ctx->getView();
+	void SceneManager::update_introduction_pos() {
+		sf::View view = _ctx->getView();
 		sf::Vector2f pos(view.getCenter().x, view.getCenter().y - 200);
-		std::string str = currentIntroText->text.getString();
+		std::string str = _currentIntroText->text.getString();
 		
-		this->currentIntroText->text.setPosition(pos.x, pos.y);
+		this->_currentIntroText->text.setPosition(pos.x, pos.y);
 		
 	}
 	
 
-	SceneManager::SceneManager(EnemyManager* em, sf::RenderWindow* ctx, Player* player) {
-		this->ctx = ctx;
-		this->player = player;
-		this->m_KitSelection = std::make_unique<KitSelection>(ctx);
-		menu = std::make_unique<Menu>(ctx);
-		this->em = em;
-		initTable();
+	SceneManager::SceneManager(EnemyManager* _em, sf::RenderWindow* _ctx, Player* _player) {
+		this->_ctx = _ctx;
+		this->_player = _player;
+		this->_kitSelection = std::make_unique<KitSelection>(_ctx);
+		_menu = std::make_unique<Menu>(_ctx);
+		this->_em = _em;
+		init_table();
 		
 		
 	};
 
-	void SceneManager::handleKitSelectionEvent() {
-		int type = m_KitSelection->HandleEvents();
+	void SceneManager::handle_kit_selection_event() {
+		int type = _kitSelection->HandleEvents();
 
 		switch (type) {
 		case 0:
 
-			player->SetKit(KitTypes::KIT_ARCHER);
-			SetScene(Scenes::SCENE_RAGNI);
+			_player->SetKit(KitTypes::KIT_ARCHER);
+			SetScene(SCENES::SCENE_RAGNI);
 			break;
 		case 1:
-			player->SetKit(KitTypes::KIT_ASSASSIN);
-			SetScene(Scenes::SCENE_RAGNI);
+			_player->SetKit(KitTypes::KIT_ASSASSIN);
+			SetScene(SCENES::SCENE_RAGNI);
 			break;
 		case 2:
-			player->SetKit(KitTypes::KIT_WARRIOR);
-			SetScene(Scenes::SCENE_RAGNI);
+			_player->SetKit(KitTypes::KIT_WARRIOR);
+			SetScene(SCENES::SCENE_RAGNI);
 			break;
 		case 3:
-			player->SetKit(KitTypes::KIT_WIZARD);
-			SetScene(Scenes::SCENE_RAGNI);
+			_player->SetKit(KitTypes::KIT_WIZARD);
+			SetScene(SCENES::SCENE_RAGNI);
 			break;
 		default:
 
@@ -275,22 +275,22 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 
 
 	void SceneManager::HandleEvents(sf::Event* e) {
-		if (currentSceneToProcess == Scenes::SCENE_MENU) {
-			handleMenuEvent();
+		if (_currentSceneToProcess == SCENES::SCENE_MENU) {
+			handle_menu_event();
 		}
-		else if(currentSceneToProcess == Scenes::SCENE_KIT_SELECTION) {
+		else if(_currentSceneToProcess == SCENES::SCENE_KIT_SELECTION) {
 			//handle scene events if there are any
-			handleKitSelectionEvent();
+			handle_kit_selection_event();
 
 		  }
 	
 	};
 
-	void SceneManager::SetScene(Scenes scene) {
+	void SceneManager::SetScene(SCENES scene) {
 
-		this->currentSceneToProcess = scene;
+		this->_currentSceneToProcess = scene;
 
-		if (currentSceneToProcess == Scenes::SCENE_MENU || currentSceneToProcess == Scenes::SCENE_KIT_SELECTION || currentSceneToProcess == Scenes::SCENE_QUIT) {
+		if (_currentSceneToProcess == SCENES::SCENE_MENU || _currentSceneToProcess == SCENES::SCENE_KIT_SELECTION || _currentSceneToProcess == SCENES::SCENE_QUIT) {
 			return;
 		}
 		/*
@@ -321,41 +321,41 @@ std::string SceneManager::getSceneFilePath(Scenes id) {
 
 		
 		*/
-		em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(300, 300));
-		em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(600, 300));
-		em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(100, 300));
-		isTransitioning = true;
-		initIntroduction();
-		initTransition();
+		_em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(300, 300));
+		_em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(600, 300));
+		_em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(100, 300));
+		_isTransitioning = true;
+		init_introduction();
+		init_transition();
 		//log welcome
 	}
 
-	void SceneManager::renderIntroduction() {		
-		ctx->draw(this->currentIntroText->text);
+	void SceneManager::render_introduction() {		
+		_ctx->draw(this->_currentIntroText->text);
 	}
 
 	void SceneManager::RenderScene() {
-		if (this->currentSceneToProcess == Scenes::SCENE_MENU) {
-			menu->Render();
+		if (this->_currentSceneToProcess == SCENES::SCENE_MENU) {
+			_menu->Render();
 			return;
 		}
-		else if (this->currentSceneToProcess == Scenes::SCENE_KIT_SELECTION) {
-			m_KitSelection->Render();
+		else if (this->_currentSceneToProcess == SCENES::SCENE_KIT_SELECTION) {
+			_kitSelection->Render();
 		}
 		else {
 			
-			sceneTable[(int)currentSceneToProcess]->RenderScene(ctx);
-			if (isTransitioning) {
-				ctx->draw(*this->transititionOverlay);
+			_sceneTable[(int)_currentSceneToProcess]->RenderScene(_ctx);
+			if (_isTransitioning) {
+				_ctx->draw(*this->_transititionOverlay);
 			}
 			
-			renderIntroduction();
+			render_introduction();
 		}
 
 	}
 
 	std::shared_ptr<Scene> SceneManager::GetCurrentScene() const {
-		return sceneTable[(int)currentSceneToProcess];
+		return _sceneTable[(int)_currentSceneToProcess];
 	}
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "../ECS.hpp"
+#include <SFML/Graphics.hpp>
 
 
 //static sprite use only, dynamic sprites (animators) used by CAnimator component

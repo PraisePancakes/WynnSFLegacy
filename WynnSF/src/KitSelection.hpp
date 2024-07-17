@@ -10,13 +10,10 @@
 constexpr float SPRITE_END = 360;
 
 class KitSelection {
-	sf::RenderWindow* ctx{ nullptr };
+	sf::RenderWindow* _ctx{ nullptr };
 
-
-	bool idleInit = false;
-	void _initKitSelectionSprites();
-	void _initKitSelectionButtons();
-
+	void init_kit_selection_sprites();
+	void init_kit_selection_buttons();
 
 public:
 	KitSelection(sf::RenderWindow* ctx);

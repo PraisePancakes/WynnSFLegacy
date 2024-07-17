@@ -1,5 +1,6 @@
 #pragma once
 #include "../ECS.hpp"
+#include <SFML/Graphics.hpp>
 
 class CCollider : public Component<CCollider> {
 public:

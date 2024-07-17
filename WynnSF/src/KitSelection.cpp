@@ -3,7 +3,7 @@
 
 
 
-	void KitSelection::_initKitSelectionSprites() {
+	void KitSelection::init_kit_selection_sprites() {
 		std::shared_ptr<Entity> archerKit = EntityManager::GetInstance()->AddEntity("KitSelection");
 		std::shared_ptr<Entity> assassinKit = EntityManager::GetInstance()->AddEntity("KitSelection");
 		std::shared_ptr<Entity> warriorKit = EntityManager::GetInstance()->AddEntity("KitSelection");
@@ -20,10 +20,10 @@
 		warriorAc->ScaleToNxN(356, 356);
 		wizardAc->ScaleToNxN(256, 256);
 
-		archerAc->sprite.setPosition((float)ctx->getSize().x / 2 + SPRITE_END, (float)ctx->getSize().y / 2);
-		assassinAc->sprite.setPosition((float)ctx->getSize().x / 2 + SPRITE_END - 256, (float)ctx->getSize().y / 2);
-		warriorAc->sprite.setPosition((float)ctx->getSize().x / 2 + SPRITE_END - (256 * 2), (float)ctx->getSize().y / 2);
-		wizardAc->sprite.setPosition((float)ctx->getSize().x / 2 + SPRITE_END - (256 * 3), (float)ctx->getSize().y / 2);
+		archerAc->sprite.setPosition((float)_ctx->getSize().x / 2 + SPRITE_END, (float)_ctx->getSize().y / 2);
+		assassinAc->sprite.setPosition((float)_ctx->getSize().x / 2 + SPRITE_END - 256, (float)_ctx->getSize().y / 2);
+		warriorAc->sprite.setPosition((float)_ctx->getSize().x / 2 + SPRITE_END - (256 * 2), (float)_ctx->getSize().y / 2);
+		wizardAc->sprite.setPosition((float)_ctx->getSize().x / 2 + SPRITE_END - (256 * 3), (float)_ctx->getSize().y / 2);
 
 		auto archerTxt = archerKit->AddComponent<CText>("Archer", "src/Assets/Fonts/PixelFont.ttf", 24, archerAc->sprite.getPosition().x, archerAc->sprite.getPosition().y - 100, true);
 		auto assassinTxt = assassinKit->AddComponent<CText>("Assassin", "src/Assets/Fonts/PixelFont.ttf", 24, assassinAc->sprite.getPosition().x, assassinAc->sprite.getPosition().y - 100, true);
@@ -31,7 +31,7 @@
 		auto wizardTxt = wizardKit->AddComponent<CText>("Wizard", "src/Assets/Fonts/PixelFont.ttf", 24, wizardAc->sprite.getPosition().x, wizardAc->sprite.getPosition().y - 100, true);
 	}
 
-	void KitSelection::_initKitSelectionButtons() {
+	void KitSelection::init_kit_selection_buttons() {
 		std::shared_ptr<Entity> archerKit = EntityManager::GetInstance()->GetEntities("KitSelection")[0];
 		std::shared_ptr<Entity> assassinKit = EntityManager::GetInstance()->GetEntities("KitSelection")[1];
 		std::shared_ptr<Entity> warriorKit = EntityManager::GetInstance()->GetEntities("KitSelection")[2];
@@ -64,15 +64,15 @@
 		wizardKit->AddComponent<CButton>(wizardAcBtnShape, wizardAcPos, sf::Color::White, sf::Color::Transparent);
 	}
 
-	KitSelection::KitSelection(sf::RenderWindow* ctx) {
-		this->ctx = ctx;
+	KitSelection::KitSelection(sf::RenderWindow* _ctx) {
+		this->_ctx = _ctx;
 
 		std::shared_ptr<Entity> title = EntityManager::GetInstance()->AddEntity("KitSelection-Title");
-		auto titleText = title->AddComponent<CText>("Select A Kit", "src/Assets/Fonts/PixelFont.ttf", 72, (float)ctx->getSize().x / 2, 100, true);
+		auto titleText = title->AddComponent<CText>("Select A Kit", "src/Assets/Fonts/PixelFont.ttf", 72, (float)_ctx->getSize().x / 2, 100, true);
 
 	
-		_initKitSelectionSprites();
-		_initKitSelectionButtons();
+		init_kit_selection_sprites();
+		init_kit_selection_buttons();
 
 
 	};
@@ -89,12 +89,13 @@
 			auto ac = kit->GetComponent<CAnimator>();
 			auto btn = kit->GetComponent<CButton>();
 
-			btn->OnHover(ctx, [btn]() {
+			btn->OnHover(_ctx, [btn]() {
 				btn->buttonRect.setOutlineColor(sf::Color::Green);
 				});
 
-			btn->OnClick(ctx, [this , &i, &selected, &kit_idx]() {
+			btn->OnClick(_ctx, [this , &i, &selected, &kit_idx]() {
 					
+					selected = true;
 					selected = true;
 					kit_idx = i;
 				});
@@ -120,13 +121,13 @@
 			auto ac = kit->GetComponent<CAnimator>();
 			auto txt = kit->GetComponent<CText>();
 			auto btn = kit->GetComponent<CButton>();
-			ctx->draw(btn->buttonRect);
-			ctx->draw(ac->sprite);
-			ctx->draw(txt->text);
+			_ctx->draw(btn->buttonRect);
+			_ctx->draw(ac->sprite);
+			_ctx->draw(txt->text);
 			ac->Play(.2f);
 		}
 
-		ctx->draw(titleText->text);
+		_ctx->draw(titleText->text);
 	};
 
 	KitSelection::~KitSelection() {};

@@ -33,8 +33,6 @@ public:
 
 	QuestBook(QuestDB* db, sf::RenderWindow* ctx);
 
-
-
 	bool IsOpen() const;
 	
 	void HandleEvents();

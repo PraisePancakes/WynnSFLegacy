@@ -10,16 +10,16 @@ constexpr size_t CHAT_LOG_MAX_SIZE = 10;
 namespace GUI {
 	class GlobalChatManager {
 
-		static std::mutex mut;
-		static GlobalChatManager* pinstance;
+		static std::mutex _mut;
+		static GlobalChatManager* _pinstance;
 
 	protected:
 
-		int min = 0;
-		int max = 0;
-		int currentSlide = 0;
-		sf::RectangleShape chatBox;
-		sf::CircleShape chatScroller;
+		int _min = 0;
+		int _max = 0;
+		int _currentSlide = 0;
+		sf::RectangleShape _chatBox;
+		sf::CircleShape _chatScroller;
 
 		GlobalChatManager();
 

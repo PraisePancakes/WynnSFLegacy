@@ -143,6 +143,8 @@
     <ClCompile Include="core\ECS.cpp" />
     <ClCompile Include="core\Manager\EntityManager.cpp" />
     <ClCompile Include="core\Utils\Utils.cpp" />
+    <ClCompile Include="src\Enemy.cpp" />
+    <ClCompile Include="src\EnemyManager.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GlobalChatManager.cpp" />
     <ClCompile Include="src\GUIManager.cpp" />
@@ -152,6 +154,7 @@
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Quest.cpp" />
     <ClCompile Include="src\QuestBook.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>

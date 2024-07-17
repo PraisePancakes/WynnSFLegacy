@@ -6,17 +6,17 @@
 #include "../core/Components/CTransform.hpp"
 
 
-Menu::Menu( sf::RenderWindow* ctx) {
+Menu::Menu( sf::RenderWindow* _ctx) {
 	
-	this->ctx = ctx;
-	initMenu();
+	this->_ctx = _ctx;
+	init_menu();
 };
 
 
-Core::Physics::Vec2D Menu::getRandomParticlePos(sf::RenderWindow* ctx) {
+Core::Physics::Vec2D Menu::gen_random_particle_pos(sf::RenderWindow* _ctx) {
 
-	const int MAX_X_POS = ctx->getSize().x;
-	const int MAX_Y_POS = ctx->getSize().y;
+	const int MAX_X_POS = _ctx->getSize().x;
+	const int MAX_Y_POS = _ctx->getSize().y;
 
 	float xPos = std::rand() % MAX_X_POS;
 	float yPos = std::rand() % MAX_Y_POS;
@@ -26,7 +26,7 @@ Core::Physics::Vec2D Menu::getRandomParticlePos(sf::RenderWindow* ctx) {
 };
 
 
-void Menu::renderMenuText() {
+void Menu::render_menu_text() {
 	std::shared_ptr<Entity> play = EntityManager::GetInstance()->GetEntities("Play-text")[0];
 
 
@@ -36,15 +36,15 @@ void Menu::renderMenuText() {
 
 
 	auto quitTextC = quit->GetComponent<CText>();
-	ctx->draw(quitTextC->text);
-	ctx->draw(playTextC->text);
+	_ctx->draw(quitTextC->text);
+	_ctx->draw(playTextC->text);
 };
 
-void Menu::renderMenuParticles() {
+void Menu::render_menu_particles() {
 	EntityVec particles = EntityManager::GetInstance()->GetEntities("Menu-particle");
 
 	const float MIN_Y_BOUND = 0;
-	const float MAX_Y_BOUND = ctx->getSize().y;
+	const float MAX_Y_BOUND = _ctx->getSize().y;
 
 	for (size_t i = 0; i < particles.size(); i++) {
 		std::shared_ptr<Entity> e = particles[i];
@@ -64,15 +64,15 @@ void Menu::renderMenuParticles() {
 
 
 		shapeC->shape.move(tc->Velocity.x, tc->Velocity.y);
-		ctx->draw(shapeC->shape);
+		_ctx->draw(shapeC->shape);
 	}
 
 
 };
 
-void Menu::initMenuParticles() {
+void Menu::init_menu_particles() {
 	for (size_t i = 0; i < PARTICLE_COUNT; i++) {
-		Core::Physics::Vec2D randomPos = getRandomParticlePos(ctx);
+		Core::Physics::Vec2D randomPos = gen_random_particle_pos(_ctx);
 
 		auto particle = EntityManager::GetInstance()->AddEntity("Menu-particle");
 
@@ -85,35 +85,35 @@ void Menu::initMenuParticles() {
 
 }
 
-void Menu::initMenu() {
+void Menu::init_menu() {
 	std::srand(std::time(NULL));
 	auto logo = EntityManager::GetInstance()->AddEntity("Logo");
 
 	auto tc = logo->AddComponent<CTransform>();
-	tc->Position.x = (float)ctx->getSize().x / 2;
-	tc->Position.y = (float)ctx->getSize().y / 4;
+	tc->Position.x = (float)_ctx->getSize().x / 2;
+	tc->Position.y = (float)_ctx->getSize().y / 4;
 	std::cout << "Logo" << std::endl;
 	auto sc = logo->AddComponent<CSprite>("src/Assets/Sprites/Logo/logo.png", sf::IntRect(0, 0, 1974, 687), 256, 128);
 	sc->sprite.setPosition(tc->Position.x, tc->Position.y);
 
 	auto playTxt = EntityManager::GetInstance()->AddEntity("Play-text");
-	auto playTextC = playTxt->AddComponent<CText>("Play", "src/Assets/Fonts/PixelFont.ttf", 36, (float)ctx->getSize().x / 2, (float)ctx->getSize().y / 2, true);
+	auto playTextC = playTxt->AddComponent<CText>("Play", "src/Assets/Fonts/PixelFont.ttf", 36, (float)_ctx->getSize().x / 2, (float)_ctx->getSize().y / 2, true);
 
 	auto playBtn = EntityManager::GetInstance()->AddEntity("Play-btn");
 	auto playBtnC = playBtn->AddComponent<CButton>(sf::RectangleShape(sf::Vector2f(playTextC->text.getGlobalBounds().width + 10, playTextC->text.getGlobalBounds().height + 10)), sf::Vector2f(playTextC->text.getPosition().x - playTextC->text.getGlobalBounds().width / 2 - 3, playTextC->text.getPosition().y), sf::Color::White, sf::Color::Black);
 
 	auto quitTxt = EntityManager::GetInstance()->AddEntity("Quit-text");
-	auto quitTextC = quitTxt->AddComponent<CText>("Quit", "src/Assets/Fonts/PixelFont.ttf", 36, (float)ctx->getSize().x / 2, (float)ctx->getSize().y / 2 + 50, true);
+	auto quitTextC = quitTxt->AddComponent<CText>("Quit", "src/Assets/Fonts/PixelFont.ttf", 36, (float)_ctx->getSize().x / 2, (float)_ctx->getSize().y / 2 + 50, true);
 
 	auto quitBtn = EntityManager::GetInstance()->AddEntity("Quit-btn");
 	auto quitBtnC = quitBtn->AddComponent<CButton>(sf::RectangleShape(sf::Vector2f(quitTextC->text.getGlobalBounds().width + 10, quitTextC->text.getGlobalBounds().height + 10)), sf::Vector2f(quitTextC->text.getPosition().x - quitTextC->text.getGlobalBounds().width / 2 - 3, quitTextC->text.getPosition().y + 5), sf::Color::White, sf::Color::Black);
 
-	initMenuParticles();
+	init_menu_particles();
 
 
 };
 
-void Menu::renderLogo() {
+void Menu::render_logo() {
 	std::shared_ptr<Entity> logo = EntityManager::GetInstance()->GetEntities("Logo")[0];
 	auto sc = logo->GetComponent<CSprite>();
 
@@ -148,12 +148,12 @@ void Menu::renderLogo() {
 
 	}
 	sc->ScaleToNxN(currentX, currentY);
-	ctx->draw(sc->sprite);
+	_ctx->draw(sc->sprite);
 }
 
 
 
-void Menu::renderMenuButtons() {
+void Menu::render_menu_buttons() {
 	std::shared_ptr<Entity> btn = EntityManager::GetInstance()->GetEntities("Play-btn")[0];
 	auto btnC = btn->GetComponent<CButton>();
 
@@ -164,8 +164,8 @@ void Menu::renderMenuButtons() {
 	
 
 
-	ctx->draw(qbtnC->buttonRect);
-	ctx->draw(btnC->buttonRect);
+	_ctx->draw(qbtnC->buttonRect);
+	_ctx->draw(btnC->buttonRect);
 }
 
 
@@ -178,20 +178,20 @@ int Menu::GetMenuEvents() const {
 	std::shared_ptr<Entity> quitbtn = EntityManager::GetInstance()->GetEntities("Quit-btn")[0];
 	auto quitbtnC = quitbtn->GetComponent<CButton>();
 
-	playbtnC->OnClick(this->ctx, [&event]() {
+	playbtnC->OnClick(this->_ctx, [&event]() {
 		event = 1;
 		});
 
-	quitbtnC->OnClick(this->ctx, [&event]() {
+	quitbtnC->OnClick(this->_ctx, [&event]() {
 		event = 2;
 		});
 
-	quitbtnC->OnHover(ctx, [quitbtnC]() {
+	quitbtnC->OnHover(_ctx, [quitbtnC]() {
 		quitbtnC->buttonRect.setOutlineColor(sf::Color::Red);
 
 		});
 
-	playbtnC->OnHover(ctx, [playbtnC]() {
+	playbtnC->OnHover(_ctx, [playbtnC]() {
 		playbtnC->buttonRect.setOutlineColor(sf::Color::Green);
 		});
 
@@ -214,10 +214,10 @@ void Menu::Clean() {
 }
 
 void Menu::Render() {
-	renderMenuParticles();
-	renderLogo();
-	renderMenuButtons();
-	renderMenuText();
+	render_menu_particles();
+	render_logo();
+	render_menu_buttons();
+	render_menu_text();
 
 };
 

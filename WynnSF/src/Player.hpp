@@ -10,18 +10,21 @@
 class Player {
 
 	std::shared_ptr<Entity> _entity = nullptr;
-	
+
+	bool _disabled = false;
 	bool _moving = false;
 	bool _movingAnimationInitialized = false;
 	bool _lookingLeft = false;
 	bool _sprinting = false;
-	void update_movement();
-	std::vector<std::shared_ptr<Kit>> _kits;
 	KitTypes _currentKitType = KitTypes::KIT_NONE;
+	std::vector<std::shared_ptr<Kit>> _kits;
+	
+
+	void update_movement();
 	void init_animation(AnimationType type);
 	void init_kits();
 	void set_pos_relative_to_transform();
-	bool _disabled = false;
+	
 public:
 	Player(float spawnX, float spawnY);
 

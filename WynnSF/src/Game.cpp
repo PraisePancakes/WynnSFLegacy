@@ -15,7 +15,7 @@ Game::Game(const std::string & title) {
 	spawn_player();
 	this->_enemyManager = std::make_unique<EnemyManager>(&this->_window);
 	_sceneManager = std::make_unique<SceneManager>(_enemyManager.get(), &this->_window, _player.get());
-	_sceneManager->SetScene(Scenes::SCENE_MENU);
+	_sceneManager->SetScene(SCENES::SCENE_MENU);
 
 	_questData = std::make_shared<QuestDB>(_player.get());
 	_questBook = std::make_unique<QuestBook>(_questData.get(), &this->_window);
@@ -34,12 +34,12 @@ void Game::Run() {
 		s_user_input();
 		s_update();
 		
-		if (_sceneManager->GetCurrentScene()->GetID() == Scenes::SCENE_QUIT) {
+		if (_sceneManager->GetCurrentScene()->GetID() == SCENES::SCENE_QUIT) {
 			_running = false;
 			_window.close();
 		}
 		//handle game events
-		if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION) {
+		if (_sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_KIT_SELECTION) {
 			s_collider();
 			s_movement();
 			
@@ -64,7 +64,7 @@ void Game::s_user_input() {
 		}
 
 
-		if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION) {
+		if (_sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_KIT_SELECTION) {
 			_player->HandleInput(&e);
 			_gui->HandleEvents(&e);
 			_questBook->HandleEvents();
@@ -91,7 +91,7 @@ void Game::update_cam() {
 
 void Game::s_update() {
 	
-	if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION ) {
+	if (_sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_KIT_SELECTION ) {
 		
 		if (!_questBook->IsOpen() ) {
 			_player->Update();	
@@ -199,7 +199,7 @@ void Game::spawn_player() {
 void Game::s_renderer() {
 	_sceneManager->RenderScene();
 
-	if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION && !_questBook->IsOpen()) {
+	if (_sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_KIT_SELECTION && !_questBook->IsOpen()) {
 		if (!_sceneManager->IsTransitioning()) {
 			_gui->Render();
 		}
@@ -213,7 +213,7 @@ void Game::s_renderer() {
 
 	
 	
-	if (_sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != Scenes::SCENE_KIT_SELECTION && !_sceneManager->IsTransitioning()) {
+	if (_sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_MENU && _sceneManager->GetCurrentScene()->GetID() != SCENES::SCENE_KIT_SELECTION && !_sceneManager->IsTransitioning()) {
 
 		_questBook->Render();
 	}
