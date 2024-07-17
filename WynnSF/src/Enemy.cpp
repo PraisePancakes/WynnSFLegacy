@@ -108,19 +108,20 @@
 
     void Minotaur::update_animator() {
 
-        EnemyAnimationType newAnimationState;
+        ENEMY_ANIMATION_TYPES newAnimationState;
+
 
         if (_state.state_agro) {
             if (_state.state_attack) {
-                newAnimationState = EnemyAnimationType::ATTACK;
+                newAnimationState = ENEMY_ANIMATION_TYPES::ATTACK;
             }
             else {
-                newAnimationState = EnemyAnimationType::RUN;
+                newAnimationState = ENEMY_ANIMATION_TYPES::RUN;
 
             }
         }
         else {
-            newAnimationState = EnemyAnimationType::IDLE;
+            newAnimationState = ENEMY_ANIMATION_TYPES::IDLE;
         }
 
 
@@ -166,7 +167,7 @@
         float velX = 0;
         float velY = 0;
 
-        EnemyAnimationType direction = EnemyAnimationType::LOOKING_LEFT;
+        ENEMY_ANIMATION_TYPES direction = ENEMY_ANIMATION_TYPES::LOOKING_LEFT;
 
         if (distance < pR + _agroRadius) {
             _state.SetAgro();
@@ -186,10 +187,10 @@
                 _state.SetAttack();
 
                 if (xDiff >= 0) {
-                    direction = EnemyAnimationType::LOOKING_RIGHT;
+                    direction = ENEMY_ANIMATION_TYPES::LOOKING_RIGHT;
                 }
                 else {
-                    direction = EnemyAnimationType::LOOKING_LEFT;
+                    direction = ENEMY_ANIMATION_TYPES::LOOKING_LEFT;
                 }
 
             }
@@ -197,12 +198,12 @@
 
                 if (xDiff >= 0) {
                     velX += ENEMY_SPEED;
-                    direction = EnemyAnimationType::LOOKING_RIGHT;
+                    direction = ENEMY_ANIMATION_TYPES::LOOKING_RIGHT;
 
                 }
                 if (xDiff < 0) {
                     velX -= ENEMY_SPEED;
-                    direction = EnemyAnimationType::LOOKING_LEFT;
+                    direction = ENEMY_ANIMATION_TYPES::LOOKING_LEFT;
                 }
 
                 if (yDiff > 0) {
@@ -261,24 +262,24 @@
 
     }
 
-    void Minotaur::SetCurrentAnimator(EnemyAnimationType animatorType) {
+    void Minotaur::SetCurrentAnimator(ENEMY_ANIMATION_TYPES animatorType) {
         switch (animatorType)
         {
-        case EnemyAnimationType::IDLE:
+        case ENEMY_ANIMATION_TYPES::IDLE:
             this->_currentAnimator = _animatorData.idle;
 
             break;
-        case EnemyAnimationType::RUN:
+        case ENEMY_ANIMATION_TYPES::RUN:
             this->_currentAnimator = _animatorData.run;
 
             break;
-        case EnemyAnimationType::ATTACK:
+        case ENEMY_ANIMATION_TYPES::ATTACK:
             this->_currentAnimator = _animatorData.attack;
             break;
-        case EnemyAnimationType::LOOKING_LEFT:
+        case ENEMY_ANIMATION_TYPES::LOOKING_LEFT:
             _currentAnimator.ScaleToNxN(-128, 128);
             break;
-        case EnemyAnimationType::LOOKING_RIGHT:
+        case ENEMY_ANIMATION_TYPES::LOOKING_RIGHT:
             _currentAnimator.ScaleToNxN(128, 128);
             break;
         default:
@@ -297,9 +298,9 @@
     Minotaur::~Minotaur() {};
 
 
-    Enemy::Enemy(EnemyTypes type, Core::Physics::Vec2D pos) {
+    Enemy::Enemy(ENEMY_TYPES type, Core::Physics::Vec2D pos) {
         switch (type) {
-        case EnemyTypes::ENEMY_MINOTAUR:
+        case ENEMY_TYPES::ENEMY_MINOTAUR:
             _enemyType = std::make_shared<Minotaur>();
             break;
 

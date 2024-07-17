@@ -441,5 +441,6 @@
   <ItemGroup>
     <Text Include="src\Data\Scenes\ragni.txt" />
     <Text Include="src\Data\Scenes\pigmans.txt" />
+    <Text Include="info\conventions.txt" />
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@ private:
 
 public:
 	EnemyManager(sf::RenderWindow* ctx);
-	void AddEnemy(EnemyTypes type, Core::Physics::Vec2D pos);
+	void AddEnemy(ENEMY_TYPES type, Core::Physics::Vec2D pos);
 
 	EnemyVec& GetEnemyVec();
 

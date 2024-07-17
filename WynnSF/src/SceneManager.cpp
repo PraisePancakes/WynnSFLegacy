@@ -321,9 +321,9 @@ std::string SceneManager::getSceneFilePath(SCENES id) {
 
 		
 		*/
-		_em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(300, 300));
-		_em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(600, 300));
-		_em->AddEnemy(EnemyTypes::ENEMY_MINOTAUR, Core::Physics::Vec2D(100, 300));
+		_em->AddEnemy(ENEMY_TYPES::ENEMY_MINOTAUR, Core::Physics::Vec2D(300, 300));
+		_em->AddEnemy(ENEMY_TYPES::ENEMY_MINOTAUR, Core::Physics::Vec2D(600, 300));
+		_em->AddEnemy(ENEMY_TYPES::ENEMY_MINOTAUR, Core::Physics::Vec2D(100, 300));
 		_isTransitioning = true;
 		init_introduction();
 		init_transition();

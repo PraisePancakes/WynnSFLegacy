@@ -288,6 +288,7 @@
     <Font Include="src\Assets\Fonts\RingBearer.TTF" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="info\conventions.txt" />
     <Text Include="src\Data\Scenes\pigmans.txt" />
     <Text Include="src\Data\Scenes\ragni.txt" />
   </ItemGroup>

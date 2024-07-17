@@ -1,0 +1,12 @@
+
+=== CODE BASE CONVENTIONS ===
+
+* private member variables : _privateMemberVariable;
+* private member functions : private_member_function();
+* public member variables  : publicMemberVariable;
+* public member functions  : PublicFunction();
+* enum class			   : ENUM_CLASS
+* namespaces               : somenamespace
+* virtual methods		   : vVirtualMethod();
+* class / struct names	   : ClassName {};
+* static local variables   : __static_local_variable; 

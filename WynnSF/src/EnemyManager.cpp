@@ -1,15 +1,11 @@
 #include "EnemyManager.hpp"
 
 
-
-
-
-
 	EnemyManager::EnemyManager(sf::RenderWindow* _ctx) {
 		this->_ctx = _ctx;
 
 	};
-	void EnemyManager::AddEnemy(EnemyTypes type, Core::Physics::Vec2D pos) {
+	void EnemyManager::AddEnemy(ENEMY_TYPES type, Core::Physics::Vec2D pos) {
 		std::shared_ptr<Enemy> e = std::make_shared<Enemy>(type, pos);
 		_enemies.push_back(e);
 	};

@@ -13,12 +13,12 @@
 
 constexpr float ENEMY_SPEED = 1;
 
-enum class EnemyTypes {
+enum class ENEMY_TYPES {
     ENEMY_MINOTAUR,
 };
 
 
-enum class EnemyAnimationType {
+enum class ENEMY_ANIMATION_TYPES {
     IDLE,
     RUN,
     ATTACK,
@@ -73,7 +73,7 @@ public:
     BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage);
 
     
-    virtual void SetCurrentAnimator(EnemyAnimationType animatorType) = 0;
+    virtual void SetCurrentAnimator(ENEMY_ANIMATION_TYPES animatorType) = 0;
     virtual std::shared_ptr<Entity> GetEntityInstance() = 0;
     virtual void Update() = 0;
     virtual CAnimator& GetCurrentAnimator() = 0;
@@ -104,7 +104,7 @@ class Minotaur : public BaseEnemyType {
 
     MinotaurAnimatorData _animatorData;
     CAnimator _currentAnimator = _animatorData.idle;
-    EnemyAnimationType _currentAnimationType = EnemyAnimationType::IDLE;
+    ENEMY_ANIMATION_TYPES _currentAnimationType = ENEMY_ANIMATION_TYPES::IDLE;
     EnemyState _state;
 
     void update_healthbar_position();
@@ -123,7 +123,7 @@ public:
 
     std::shared_ptr<Entity> GetEntityInstance() override;
     void Update() override;
-    void SetCurrentAnimator(EnemyAnimationType animatorType) override;
+    void SetCurrentAnimator(ENEMY_ANIMATION_TYPES animatorType) override;
     CAnimator& GetCurrentAnimator() override;
     void PlayCurrentAnimator(float dt) override;
 
@@ -135,7 +135,7 @@ private:
     std::shared_ptr<BaseEnemyType> _enemyType;
 
 public:
-    Enemy(EnemyTypes type, Core::Physics::Vec2D pos);
+    Enemy(ENEMY_TYPES type, Core::Physics::Vec2D pos);
     void Update();
     void Render(sf::RenderWindow* ctx);
 
