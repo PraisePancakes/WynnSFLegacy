@@ -27,6 +27,11 @@
         _healthBarContainer.setFillColor(sf::Color::Black);
         _healthBarContainer.setOrigin(_healthBarContainer.getSize().x / 2, _healthBarContainer.getSize().y / 2);
 
+        _enemyUiFont.loadFromFile("src/Assets/Fonts/PixelFont.ttf");
+        _nameRenderable.setString(name);
+        _nameRenderable.setFont(_enemyUiFont);
+        _nameRenderable.setOrigin(_nameRenderable.getGlobalBounds().getSize().x / 2, -_nameRenderable.getGlobalBounds().getSize().y / 2);
+        
 
         this->_entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
 
@@ -96,6 +101,10 @@
 
         healthTxtC->text.setPosition(healthTextPos);
         healthTxtC->text.setString(std::to_string(healthC->CurrHp));
+
+        const float nameRenderableXpos = _healthBarContainer.getPosition().x;
+        const float nameRenderableYpos = _healthBarContainer.getPosition().y - _nameRenderable.getGlobalBounds().height - (5 * _healthBarContainer.getSize().y);
+        _nameRenderable.setPosition(nameRenderableXpos, nameRenderableYpos);
     }
 
     void Minotaur::update_healthbar_ui() {
@@ -239,6 +248,7 @@
         ctx->draw(this->_healthBarContainer);
         ctx->draw(this->_healthBarFill);
         ctx->draw(healthTxtC->text);
+        ctx->draw(_nameRenderable);
     };
 
 

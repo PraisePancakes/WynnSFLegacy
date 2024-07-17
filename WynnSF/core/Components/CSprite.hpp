@@ -5,9 +5,6 @@
 
 //static sprite use only, dynamic sprites (animators) used by CAnimator component
 class CSprite : public Component<CSprite> {
-
-
-
 public:
 	sf::Sprite sprite;
 	sf::Texture texture;

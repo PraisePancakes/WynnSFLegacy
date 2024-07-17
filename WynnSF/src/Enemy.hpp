@@ -68,6 +68,7 @@ protected:
     sf::RectangleShape _healthBarContainer;
     sf::RectangleShape _healthBarFill;
     sf::Text _nameRenderable;
+    sf::Font _enemyUiFont;
     
 public:
     BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage);
