@@ -6,7 +6,7 @@
 //TO DO : FIX ENEMY HEALTH BAR UI
 
 
-    BaseEnemyType::BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage)
+    BaseEnemyType::BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage, int level)
         : _name(name), _agroRadius(agroRadius), _damageOutput(damage) {
         this->_entity = EntityManager::GetInstance()->AddEntity("Enemy");
 
@@ -31,7 +31,12 @@
         _nameRenderable.setString(name);
         _nameRenderable.setFont(_enemyUiFont);
         _nameRenderable.setOrigin(_nameRenderable.getGlobalBounds().getSize().x / 2, -_nameRenderable.getGlobalBounds().getSize().y / 2);
-        
+        _nameRenderable.setCharacterSize(15);
+
+        _levelRenderable.setFont(_enemyUiFont);
+        _levelRenderable.setString("lvl. " + std::to_string(level));
+        _levelRenderable.setOrigin(_levelRenderable.getGlobalBounds().getSize().x / 2, -_levelRenderable.getGlobalBounds().getSize().y / 2);
+        _levelRenderable.setCharacterSize(15);
 
         this->_entity->AddComponent<CTransform>(Core::Physics::Vec2D(0, 0), Core::Physics::Vec2D(0, 0), 0);
 
@@ -105,6 +110,10 @@
         const float nameRenderableXpos = _healthBarContainer.getPosition().x;
         const float nameRenderableYpos = _healthBarContainer.getPosition().y - _nameRenderable.getGlobalBounds().height - (5 * _healthBarContainer.getSize().y);
         _nameRenderable.setPosition(nameRenderableXpos, nameRenderableYpos);
+
+        const float levelRenderableXpos = nameRenderableXpos + (_nameRenderable.getGlobalBounds().getSize().x);
+        const float levelRenderableYpos = nameRenderableYpos;
+        _levelRenderable.setPosition(levelRenderableXpos, levelRenderableYpos);
     }
 
     void Minotaur::update_healthbar_ui() {
@@ -249,10 +258,11 @@
         ctx->draw(this->_healthBarFill);
         ctx->draw(healthTxtC->text);
         ctx->draw(_nameRenderable);
+        ctx->draw(_levelRenderable);
     };
 
 
-    Minotaur::Minotaur() : BaseEnemyType("Minotaur", 150, 100, 20) {
+    Minotaur::Minotaur() : BaseEnemyType("Minotaur", 150, 100, 20, 15) {
         this->_currentAnimator.ScaleToNxN(128, 128);
         this->_entity->AddComponent<CCollider>(_currentAnimator.frameWidth / 2);
 

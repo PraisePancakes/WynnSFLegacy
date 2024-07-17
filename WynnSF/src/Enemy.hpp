@@ -64,14 +64,16 @@ protected:
     std::string _name;
     bool _agro = false;
     float _agroRadius = 100;
+    int _level = 0;
     unsigned short int _damageOutput = 0;
     sf::RectangleShape _healthBarContainer;
     sf::RectangleShape _healthBarFill;
     sf::Text _nameRenderable;
     sf::Font _enemyUiFont;
+    sf::Text _levelRenderable;
     
 public:
-    BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage);
+    BaseEnemyType(const std::string& name, float health, float agroRadius, unsigned short int damage, int level);
 
     
     virtual void SetCurrentAnimator(ENEMY_ANIMATION_TYPES animatorType) = 0;
