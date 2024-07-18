@@ -287,7 +287,7 @@ std::string SceneManager::getSceneFilePath(SCENES id) {
 	};
 
 	void SceneManager::SetScene(SCENES scene) {
-
+		_em->ClearEnemies();
 		this->_currentSceneToProcess = scene;
 
 		if (_currentSceneToProcess == SCENES::SCENE_MENU || _currentSceneToProcess == SCENES::SCENE_KIT_SELECTION || _currentSceneToProcess == SCENES::SCENE_QUIT) {
