@@ -6,16 +6,29 @@
 #include "Kit.hpp"
 #include <vector>
 
+struct PlayerState {
+	bool disabled;
+	bool moving;
+	bool lookingleft;
+	bool sprinting;
+	bool attacking;
+
+	PlayerState() {};
+	~PlayerState() {};
+};
+
 
 class Player {
 
 	std::shared_ptr<Entity> _entity = nullptr;
 
+	//TO : DO move all this into a state struct
 	bool _disabled = false;
 	bool _moving = false;
 	bool _movingAnimationInitialized = false;
 	bool _lookingLeft = false;
 	bool _sprinting = false;
+	bool _attacking = false;
 	KitTypes _currentKitType = KitTypes::KIT_NONE;
 	std::vector<std::shared_ptr<Kit>> _kits;
 	

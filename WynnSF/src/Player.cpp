@@ -77,15 +77,19 @@ static void validateHealth() {
 void Player::update_movement() {
 
 	set_pos_relative_to_transform();
+		if (_attacking && !IsMoving()) {
+			init_animation(AnimationType::ATTACK);
+		}
+		if (IsMoving() && !_movingAnimationInitialized) {
+			init_animation(AnimationType::RUN);
+			_movingAnimationInitialized = true;
+		}
+		else if (!IsMoving() && _movingAnimationInitialized) {
+			init_animation(AnimationType::IDLE);
+			_movingAnimationInitialized = false;
+		}
 	
-	if (IsMoving() && !_movingAnimationInitialized) {
-		init_animation(AnimationType::RUN);
-		_movingAnimationInitialized = true;
-	}
-	else if (!IsMoving() && _movingAnimationInitialized) {
-		init_animation(AnimationType::IDLE);
-		_movingAnimationInitialized = false;
-	}
+	
 
 	if (_lookingLeft) {
 		init_animation(AnimationType::LOOKING_LEFT);
@@ -93,6 +97,7 @@ void Player::update_movement() {
 	else {
 		init_animation(AnimationType::LOOKING_RIGHT);
 	}
+	
 
 }
 
@@ -231,6 +236,7 @@ void Player::HandleInput(sf::Event* e) {
 			ic->idown = false;
 			ic->iright = false;
 			_sprinting = false;
+			_attacking = false;
 			return;
 	}
 	if (e->type == sf::Event::KeyPressed) {
@@ -280,6 +286,18 @@ void Player::HandleInput(sf::Event* e) {
 			_sprinting = false;
 		}
 	}
+	if (e->type == sf::Event::MouseButtonPressed) {
+		if (e->mouseButton.button == sf::Mouse::Left) {
+			_attacking = true;
+		}
+	}
+	else if (e->type == sf::Event::MouseButtonReleased) {
+		if (e->mouseButton.button == sf::Mouse::Left) {
+			_attacking = false;
+		}
+	}
+
+	
 }
 
 

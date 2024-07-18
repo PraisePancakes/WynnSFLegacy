@@ -49,6 +49,7 @@ public:
 struct ArcherAnimationData {
 	CAnimator idle{ "src/Assets/Sprites/Player/Archer/Sprites/Character/Idle.png", sf::IntRect(0, 0, 100, 100), 900, 100 };
 	CAnimator run{ "src/Assets/Sprites/Player/Archer/Sprites/Character/Run.png", sf::IntRect(0, 0, 100, 100), 700, 100 };
+	CAnimator attack{ "src/Assets/Sprites/Player/Archer/Sprites/Character/Attack.png", sf::IntRect(0, 0, 100, 100), 500 , 100};
 	
 };
 
@@ -99,6 +100,7 @@ public:
 			this->currentAnimator = animatorData.run;
 			break;
 		case AnimationType::ATTACK:
+			
 			break;
 		case AnimationType::LOOKING_LEFT:
 			currentAnimator.ScaleToNxN(-128, 128);
@@ -201,6 +203,7 @@ public:
 			this->currentAnimator = animatorData.run;
 			break;
 		case AnimationType::ATTACK:
+			this->currentAnimator = animatorData.attack;
 			break;
 		case AnimationType::LOOKING_LEFT:
 			currentAnimator.ScaleToNxN(-128, 128);
