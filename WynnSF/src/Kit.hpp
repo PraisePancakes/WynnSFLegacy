@@ -56,6 +56,7 @@ struct ArcherAnimationData {
 struct AssassinAnimatorData {
 	CAnimator idle{ "src/Assets/Sprites/Player/Assassin/Sprites/Character/Idle.png", sf::IntRect(0, 0, 200, 200), 600, 200 };
 	CAnimator run{ "src/Assets/Sprites/Player/Assassin/Sprites/Character/Run.png", sf::IntRect(0, 0, 200, 200), 800, 200 };
+	CAnimator attack{ "src/Assets/Sprites/Player/Assassin/Sprites/Character/Attack1.png", sf::IntRect(0, 0, 200, 200), 400, 200 };
 };
 
 struct WarriorAnimatorData {
@@ -149,6 +150,7 @@ public:
 			this->currentAnimator = animatorData.run;
 			break;
 		case AnimationType::ATTACK:
+			this->currentAnimator = animatorData.attack;
 			break;
 		case AnimationType::LOOKING_LEFT:
 			currentAnimator.ScaleToNxN(-128, 128);
